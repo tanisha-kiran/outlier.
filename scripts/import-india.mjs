@@ -1,0 +1,11 @@
+import {XMLParser} from 'fast-xml-parser';
+import {writeFile} from 'node:fs/promises';
+const source='https://brabble.ai/rss/hackathons.xml';
+const response=await fetch(source,{signal:AbortSignal.timeout(30000)});
+if(!response.ok)throw new Error(`Feed unavailable: HTTP ${response.status}`);
+const xml=await response.text();if(xml.length>5_000_000)throw Error('Feed too large');
+const parsed=new XMLParser({ignoreAttributes:false}).parse(xml);const items=parsed?.rss?.channel?.item;if(!Array.isArray(items))throw Error('Invalid or empty RSS feed; existing snapshot preserved');
+const rows=items.map(item=>{const description=String(item.description||'');const match=description.match(/In person:\s*([^\n]+)/i);const location=match?.[1]?.trim()||(/\bonline\b/i.test(description)?'Online':'Location not specified');return {id:String(item.guid?.['#text']||item.link||''),title:String(item.title||''),url:String(item.link||''),description,deadline:String(item.pubDate||''),location,mode:match?'in_person':/\bonline\b/i.test(description)?'online':'unknown'}}).filter(item=>{try{return item.title&&new URL(item.url).protocol==='https:'&&Number.isFinite(Date.parse(item.deadline))}catch{return false}});
+if(rows.length===0)throw Error('No valid items; existing snapshot preserved');
+const data={source:'Brabble.ai',sourceUrl:'https://brabble.ai/hackathons',feedUrl:source,fetchedAt:new Date().toISOString(),feedBuiltAt:parsed.rss.channel.lastBuildDate||null,events:rows};
+await writeFile(new URL('../public/india-events.json',import.meta.url),JSON.stringify(data,null,2)+'\n');console.log(`Imported ${rows.length} events from Brabble’s public RSS feed.`);
