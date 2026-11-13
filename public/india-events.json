@@ -2,35 +2,17 @@
   "source": "Brabble.ai",
   "sourceUrl": "https://brabble.ai/hackathons",
   "feedUrl": "https://brabble.ai/rss/hackathons.xml",
-  "fetchedAt": "2026-11-12T23:38:04.200Z",
-  "feedBuiltAt": "Thu, 12 Nov 2026 23:38:04 GMT",
+  "fetchedAt": "2026-11-13T06:42:08.130Z",
+  "feedBuiltAt": "Fri, 13 Nov 2026 06:42:08 GMT",
   "events": [
     {
-      "id": "brabble:devpost-31948",
-      "title": "Build, Demo, and Take Home a Working AI Support Bot",
-      "url": "https://brabble.ai/s/devpost-31948",
-      "description": "egain · via Devpost - Registration closes Thu, 12 Nov 2026 23:59:00 GMT - Prize: $750 - In person: eGain Corp.",
-      "deadline": "Thu, 12 Nov 2026 23:59:00 GMT",
-      "location": "eGain Corp.",
+      "id": "brabble:unstop-1770284",
+      "title": "InnovaThon - Faculty of Engineering and Technology Agra College X Nimblux",
+      "url": "https://brabble.ai/s/unstop-1770284",
+      "description": "NIMBLUX · via Unstop - Registration closes Fri, 13 Nov 2026 09:30:00 GMT - Prize: ₹50K - In person: Agra",
+      "deadline": "Fri, 13 Nov 2026 09:30:00 GMT",
+      "location": "Agra",
       "mode": "in_person"
-    },
-    {
-      "id": "brabble:devpost-31302",
-      "title": "PayPal AI Hackathon",
-      "url": "https://brabble.ai/s/devpost-31302",
-      "description": "PayPal · via Devpost - Registration closes Thu, 12 Nov 2026 23:59:00 GMT - Prize: $67,500 - Online",
-      "deadline": "Thu, 12 Nov 2026 23:59:00 GMT",
-      "location": "Online",
-      "mode": "online"
-    },
-    {
-      "id": "brabble:hackonvibe-com-november-2026-hackonvibe-12c476",
-      "title": "HackOnVibe.com — November 2026 — HackOnVibe",
-      "url": "https://brabble.ai/s/hackonvibe-com-november-2026-hackonvibe-12c476",
-      "description": "HackOnVibe · via Hackonvibe - Registration closes Fri, 13 Nov 2026 00:00:00 GMT - Prize: $100 - Online",
-      "deadline": "Fri, 13 Nov 2026 00:00:00 GMT",
-      "location": "Online",
-      "mode": "online"
     },
     {
       "id": "brabble:unstop-1772846",
@@ -51,12 +33,12 @@
       "mode": "in_person"
     },
     {
-      "id": "brabble:unstop-1780735",
-      "title": "Hack<N>Pitch",
-      "url": "https://brabble.ai/s/unstop-1780735",
-      "description": "Jadavpur University (JU), Kolkata · via Unstop - Registration closes Fri, 13 Nov 2026 18:28:00 GMT - Prize: ₹12K - In person: Kolkata",
-      "deadline": "Fri, 13 Nov 2026 18:28:00 GMT",
-      "location": "Kolkata",
+      "id": "brabble:unstop-1790269",
+      "title": "Cognition- AI Hackathon",
+      "url": "https://brabble.ai/s/unstop-1790269",
+      "description": "Sri Guru Gobind Singh College of Commerce (SGGSCC), New Delhi · via Unstop - Registration closes Fri, 13 Nov 2026 18:29:00 GMT - Prize: ₹10K - In person: New Delhi",
+      "deadline": "Fri, 13 Nov 2026 18:29:00 GMT",
+      "location": "New Delhi",
       "mode": "in_person"
     },
     {
@@ -105,19 +87,10 @@
       "mode": "online"
     },
     {
-      "id": "brabble:devfolio-d957bc2099f945e99edfae0c2972bed9",
-      "title": "DevNexus 2.0",
-      "url": "https://brabble.ai/s/devfolio-d957bc2099f945e99edfae0c2972bed9",
-      "description": "See listing · via Devfolio - Registration closes Fri, 13 Nov 2026 18:30:00 GMT - In person: Kolkata",
-      "deadline": "Fri, 13 Nov 2026 18:30:00 GMT",
-      "location": "Kolkata",
-      "mode": "in_person"
-    },
-    {
-      "id": "brabble:unstop-1791573",
-      "title": "MassX CTF 2026",
-      "url": "https://brabble.ai/s/unstop-1791573",
-      "description": "Panipat Institute of Engineering & Technology (PIET), Panipat · via Unstop - Registration closes Fri, 13 Nov 2026 18:30:00 GMT - Online",
+      "id": "brabble:unstop-1771798",
+      "title": "Catalyst - Solo AI Hackathon",
+      "url": "https://brabble.ai/s/unstop-1771798",
+      "description": "Makers Need More (MnM) · via Unstop - Registration closes Fri, 13 Nov 2026 18:30:00 GMT - Prize: ₹15K - Online",
       "deadline": "Fri, 13 Nov 2026 18:30:00 GMT",
       "location": "Online",
       "mode": "online"
@@ -132,13 +105,22 @@
       "mode": "in_person"
     },
     {
-      "id": "brabble:unstop-1771798",
-      "title": "Catalyst - Solo AI Hackathon",
-      "url": "https://brabble.ai/s/unstop-1771798",
-      "description": "Makers Need More (MnM) · via Unstop - Registration closes Fri, 13 Nov 2026 18:30:00 GMT - Prize: ₹15K - Online",
+      "id": "brabble:unstop-1791573",
+      "title": "MassX CTF 2026",
+      "url": "https://brabble.ai/s/unstop-1791573",
+      "description": "Panipat Institute of Engineering & Technology (PIET), Panipat · via Unstop - Registration closes Fri, 13 Nov 2026 18:30:00 GMT - Online",
       "deadline": "Fri, 13 Nov 2026 18:30:00 GMT",
       "location": "Online",
       "mode": "online"
+    },
+    {
+      "id": "brabble:devfolio-d957bc2099f945e99edfae0c2972bed9",
+      "title": "DevNexus 2.0",
+      "url": "https://brabble.ai/s/devfolio-d957bc2099f945e99edfae0c2972bed9",
+      "description": "See listing · via Devfolio - Registration closes Fri, 13 Nov 2026 18:30:00 GMT - In person: Kolkata",
+      "deadline": "Fri, 13 Nov 2026 18:30:00 GMT",
+      "location": "Kolkata",
+      "mode": "in_person"
     },
     {
       "id": "brabble:unstop-1763117",
@@ -150,12 +132,12 @@
       "mode": "online"
     },
     {
-      "id": "brabble:devpost-32018",
-      "title": "CodeCoogs x CenterPoint Hackathon",
-      "url": "https://brabble.ai/s/devpost-32018",
-      "description": "CenterPoint · via Devpost - Registration closes Fri, 13 Nov 2026 23:59:00 GMT - In person: University of Houston PGH/Student Center",
+      "id": "brabble:devpost-31936",
+      "title": "IBM Qiskit Hackathon - Bangladesh",
+      "url": "https://brabble.ai/s/devpost-31936",
+      "description": "Qiskit User Group Bangladesh · via Devpost - Registration closes Fri, 13 Nov 2026 23:59:00 GMT - In person: BRAC University",
       "deadline": "Fri, 13 Nov 2026 23:59:00 GMT",
-      "location": "University of Houston PGH/Student Center",
+      "location": "BRAC University",
       "mode": "in_person"
     },
     {
@@ -213,12 +195,12 @@
       "mode": "in_person"
     },
     {
-      "id": "brabble:unstop-1790269",
-      "title": "Cognition- AI Hackathon",
-      "url": "https://brabble.ai/s/unstop-1790269",
-      "description": "Sri Guru Gobind Singh College of Commerce (SGGSCC), New Delhi · via Unstop - Registration closes Sat, 14 Nov 2026 18:29:00 GMT - Prize: ₹10K - In person: New Delhi",
-      "deadline": "Sat, 14 Nov 2026 18:29:00 GMT",
-      "location": "New Delhi",
+      "id": "brabble:unstop-1780735",
+      "title": "Hack<N>Pitch",
+      "url": "https://brabble.ai/s/unstop-1780735",
+      "description": "Jadavpur University (JU), Kolkata · via Unstop - Registration closes Sat, 14 Nov 2026 12:59:00 GMT - Prize: ₹12K - In person: Kolkata",
+      "deadline": "Sat, 14 Nov 2026 12:59:00 GMT",
+      "location": "Kolkata",
       "mode": "in_person"
     },
     {
@@ -240,6 +222,15 @@
       "mode": "online"
     },
     {
+      "id": "brabble:unstop-1770690",
+      "title": "Code Sprint",
+      "url": "https://brabble.ai/s/unstop-1770690",
+      "description": "University of Petroleum & Energy Studies (UPES), Dehradun · via Unstop - Registration closes Sat, 14 Nov 2026 18:30:00 GMT - Prize: ₹30K - In person: Dehradun",
+      "deadline": "Sat, 14 Nov 2026 18:30:00 GMT",
+      "location": "Dehradun",
+      "mode": "in_person"
+    },
+    {
       "id": "brabble:unstop-1786809",
       "title": "Hack-a-Sol 5.0",
       "url": "https://brabble.ai/s/unstop-1786809",
@@ -258,15 +249,6 @@
       "mode": "in_person"
     },
     {
-      "id": "brabble:unstop-1770284",
-      "title": "InnovaThon - Faculty of Engineering and Technology Agra College X Nimblux",
-      "url": "https://brabble.ai/s/unstop-1770284",
-      "description": "NIMBLUX · via Unstop - Registration closes Sat, 14 Nov 2026 18:30:00 GMT - Prize: ₹50K - In person: Agra",
-      "deadline": "Sat, 14 Nov 2026 18:30:00 GMT",
-      "location": "Agra",
-      "mode": "in_person"
-    },
-    {
       "id": "brabble:unstop-1751032",
       "title": "Students of Global Impact",
       "url": "https://brabble.ai/s/unstop-1751032",
@@ -276,30 +258,12 @@
       "mode": "online"
     },
     {
-      "id": "brabble:unstop-1770690",
-      "title": "Code Sprint",
-      "url": "https://brabble.ai/s/unstop-1770690",
-      "description": "University of Petroleum & Energy Studies (UPES), Dehradun · via Unstop - Registration closes Sat, 14 Nov 2026 18:30:00 GMT - Prize: ₹30K - In person: Dehradun",
-      "deadline": "Sat, 14 Nov 2026 18:30:00 GMT",
-      "location": "Dehradun",
-      "mode": "in_person"
-    },
-    {
-      "id": "brabble:devpost-31943",
-      "title": "CIVIC Hack 2026",
-      "url": "https://brabble.ai/s/devpost-31943",
-      "description": "Future Cities Institute · via Devpost - Registration closes Sat, 14 Nov 2026 23:59:00 GMT - Prize: $CAD 1,500 - Online",
+      "id": "brabble:devpost-32021",
+      "title": "HackED Beta 2026",
+      "url": "https://brabble.ai/s/devpost-32021",
+      "description": "Computer Engineering Club, Ualberta · via Devpost - Registration closes Sat, 14 Nov 2026 23:59:00 GMT - Prize: $CAD 1,100 - In person: University of Alberta - UComms",
       "deadline": "Sat, 14 Nov 2026 23:59:00 GMT",
-      "location": "Online",
-      "mode": "online"
-    },
-    {
-      "id": "brabble:devpost-31936",
-      "title": "IBM Qiskit Hackathon - Bangladesh",
-      "url": "https://brabble.ai/s/devpost-31936",
-      "description": "DevChangeMakers Community · via Devpost - Registration closes Sat, 14 Nov 2026 23:59:00 GMT - In person: BRAC University",
-      "deadline": "Sat, 14 Nov 2026 23:59:00 GMT",
-      "location": "BRAC University",
+      "location": "University of Alberta - UComms",
       "mode": "in_person"
     },
     {
@@ -309,15 +273,6 @@
       "description": "WISE · via Devpost - Registration closes Sat, 14 Nov 2026 23:59:00 GMT - In person: Wise Tallinn",
       "deadline": "Sat, 14 Nov 2026 23:59:00 GMT",
       "location": "Wise Tallinn",
-      "mode": "in_person"
-    },
-    {
-      "id": "brabble:devpost-30506",
-      "title": "Unfair Weekend 2026",
-      "url": "https://brabble.ai/s/devpost-30506",
-      "description": "ISM University · via Devpost - Registration closes Sat, 14 Nov 2026 23:59:00 GMT - Prize: €7,000 - In person: ISM University, Vilnius",
-      "deadline": "Sat, 14 Nov 2026 23:59:00 GMT",
-      "location": "ISM University, Vilnius",
       "mode": "in_person"
     },
     {
@@ -366,6 +321,24 @@
       "mode": "in_person"
     },
     {
+      "id": "brabble:unstop-1778710",
+      "title": "Roboforge",
+      "url": "https://brabble.ai/s/unstop-1778710",
+      "description": "Maharaja Surajmal Institute of Technology (MSIT), New Delhi · via Unstop - Registration closes Sun, 15 Nov 2026 15:30:00 GMT - In person: New Delhi",
+      "deadline": "Sun, 15 Nov 2026 15:30:00 GMT",
+      "location": "New Delhi",
+      "mode": "in_person"
+    },
+    {
+      "id": "brabble:internshala-9569",
+      "title": "Bharat Agentic AI Hackathon 2026",
+      "url": "https://brabble.ai/s/internshala-9569",
+      "description": "Listed on Internshala · via Internshala - Registration closes Sun, 15 Nov 2026 18:29:00 GMT - Online",
+      "deadline": "Sun, 15 Nov 2026 18:29:00 GMT",
+      "location": "Online",
+      "mode": "online"
+    },
+    {
       "id": "brabble:unstop-1775217",
       "title": "Build 2 Rise 2026",
       "url": "https://brabble.ai/s/unstop-1775217",
@@ -384,19 +357,19 @@
       "mode": "in_person"
     },
     {
-      "id": "brabble:unstop-1784554",
-      "title": "One Who Codes 2026 - A Portfolio Challenge",
-      "url": "https://brabble.ai/s/unstop-1784554",
-      "description": "Acadable · via Unstop - Registration closes Sun, 15 Nov 2026 18:29:00 GMT - Prize: ₹30K - Online",
+      "id": "brabble:unstop-1799543",
+      "title": "Data Analytics Hackathon",
+      "url": "https://brabble.ai/s/unstop-1799543",
+      "description": "Gradient Learnings · via Unstop - Registration closes Sun, 15 Nov 2026 18:29:00 GMT - Prize: ₹50K - Online",
       "deadline": "Sun, 15 Nov 2026 18:29:00 GMT",
       "location": "Online",
       "mode": "online"
     },
     {
-      "id": "brabble:unstop-1799543",
-      "title": "Data Analytics Hackathon",
-      "url": "https://brabble.ai/s/unstop-1799543",
-      "description": "Gradient Learnings · via Unstop - Registration closes Sun, 15 Nov 2026 18:29:00 GMT - Prize: ₹50K - Online",
+      "id": "brabble:unstop-1784554",
+      "title": "One Who Codes 2026 - A Portfolio Challenge",
+      "url": "https://brabble.ai/s/unstop-1784554",
+      "description": "Acadable · via Unstop - Registration closes Sun, 15 Nov 2026 18:29:00 GMT - Prize: ₹30K - Online",
       "deadline": "Sun, 15 Nov 2026 18:29:00 GMT",
       "location": "Online",
       "mode": "online"
@@ -420,15 +393,6 @@
       "mode": "online"
     },
     {
-      "id": "brabble:unstop-1768041",
-      "title": "Srujan 2026 - 1.5 Lakh Mega Hackathon In association with L&T Edutech - Online Round is Free, No Rs 1200 Charged in it",
-      "url": "https://brabble.ai/s/unstop-1768041",
-      "description": "Bk birla College · via Unstop - Registration closes Sun, 15 Nov 2026 18:29:00 GMT - In person: Kalyan",
-      "deadline": "Sun, 15 Nov 2026 18:29:00 GMT",
-      "location": "Kalyan",
-      "mode": "in_person"
-    },
-    {
       "id": "brabble:internshala-13501",
       "title": "Arthaton 2026 : AI Finance Hackathon",
       "url": "https://brabble.ai/s/internshala-13501",
@@ -441,6 +405,24 @@
       "id": "brabble:internshala-13357",
       "title": "GavThon 1.0 – 1st IIIJS National Legal Hackathon 2026",
       "url": "https://brabble.ai/s/internshala-13357",
+      "description": "Listed on Internshala · via Internshala - Registration closes Sun, 15 Nov 2026 18:29:00 GMT - Online",
+      "deadline": "Sun, 15 Nov 2026 18:29:00 GMT",
+      "location": "Online",
+      "mode": "online"
+    },
+    {
+      "id": "brabble:unstop-1768041",
+      "title": "Srujan 2026 - 1.5 Lakh Mega Hackathon In association with L&T Edutech - Online Round is Free, No Rs 1200 Charged in it",
+      "url": "https://brabble.ai/s/unstop-1768041",
+      "description": "Bk birla College · via Unstop - Registration closes Sun, 15 Nov 2026 18:29:00 GMT - In person: Kalyan",
+      "deadline": "Sun, 15 Nov 2026 18:29:00 GMT",
+      "location": "Kalyan",
+      "mode": "in_person"
+    },
+    {
+      "id": "brabble:internshala-13592",
+      "title": "IceHacks 2026",
+      "url": "https://brabble.ai/s/internshala-13592",
       "description": "Listed on Internshala · via Internshala - Registration closes Sun, 15 Nov 2026 18:29:00 GMT - Online",
       "deadline": "Sun, 15 Nov 2026 18:29:00 GMT",
       "location": "Online",
@@ -501,15 +483,6 @@
       "mode": "online"
     },
     {
-      "id": "brabble:internshala-9569",
-      "title": "Bharat Agentic AI Hackathon 2026",
-      "url": "https://brabble.ai/s/internshala-9569",
-      "description": "Listed on Internshala · via Internshala - Registration closes Sun, 15 Nov 2026 18:29:00 GMT - Online",
-      "deadline": "Sun, 15 Nov 2026 18:29:00 GMT",
-      "location": "Online",
-      "mode": "online"
-    },
-    {
       "id": "brabble:unstop-1769121",
       "title": "Homingo Hack Days: Online AI Hackathon",
       "url": "https://brabble.ai/s/unstop-1769121",
@@ -528,21 +501,21 @@
       "mode": "in_person"
     },
     {
-      "id": "brabble:unstop-1790097",
-      "title": "WIE HackEarth 2.0",
-      "url": "https://brabble.ai/s/unstop-1790097",
-      "description": "Galgotias University (GU), Greater Noida · via Unstop - Registration closes Sun, 15 Nov 2026 18:30:00 GMT - In person: Gautam Buddha Nagar",
-      "deadline": "Sun, 15 Nov 2026 18:30:00 GMT",
-      "location": "Gautam Buddha Nagar",
-      "mode": "in_person"
-    },
-    {
       "id": "brabble:unstop-1773211",
       "title": "Build with Agora - BLR",
       "url": "https://brabble.ai/s/unstop-1773211",
       "description": "KNOTiC · via Unstop - Registration closes Sun, 15 Nov 2026 18:30:00 GMT - Prize: ₹2K - In person: Bangalore",
       "deadline": "Sun, 15 Nov 2026 18:30:00 GMT",
       "location": "Bangalore",
+      "mode": "in_person"
+    },
+    {
+      "id": "brabble:unstop-1790097",
+      "title": "WIE HackEarth 2.0",
+      "url": "https://brabble.ai/s/unstop-1790097",
+      "description": "Galgotias University (GU), Greater Noida · via Unstop - Registration closes Sun, 15 Nov 2026 18:30:00 GMT - In person: Gautam Buddha Nagar",
+      "deadline": "Sun, 15 Nov 2026 18:30:00 GMT",
+      "location": "Gautam Buddha Nagar",
       "mode": "in_person"
     },
     {
@@ -570,6 +543,15 @@
       "description": "HackSC · via Devpost - Registration closes Sun, 15 Nov 2026 23:59:00 GMT - Prize: $14,000 - In person: Ginsburg Hall, USC",
       "deadline": "Sun, 15 Nov 2026 23:59:00 GMT",
       "location": "Ginsburg Hall, USC",
+      "mode": "in_person"
+    },
+    {
+      "id": "brabble:devpost-30876",
+      "title": "Central Hacks",
+      "url": "https://brabble.ai/s/devpost-30876",
+      "description": "Central Michigan University · via Devpost - Registration closes Sun, 15 Nov 2026 23:59:00 GMT - Prize: $1,750 - In person: Central Michigan University Pearce Hall",
+      "deadline": "Sun, 15 Nov 2026 23:59:00 GMT",
+      "location": "Central Michigan University Pearce Hall",
       "mode": "in_person"
     },
     {
@@ -654,15 +636,6 @@
       "mode": "in_person"
     },
     {
-      "id": "brabble:devpost-31636",
-      "title": "DevHacks",
-      "url": "https://brabble.ai/s/devpost-31636",
-      "description": "Software Engineering Club (DEV) · via Devpost - Registration closes Sun, 15 Nov 2026 23:59:00 GMT - In person: The Ohio State University",
-      "deadline": "Sun, 15 Nov 2026 23:59:00 GMT",
-      "location": "The Ohio State University",
-      "mode": "in_person"
-    },
-    {
       "id": "brabble:devpost-31879",
       "title": "Immerse the Bay 2026",
       "url": "https://brabble.ai/s/devpost-31879",
@@ -678,15 +651,6 @@
       "description": "n8n · via Devpost - Registration closes Sun, 15 Nov 2026 23:59:00 GMT - Prize: $1,000 - In person: University of British Columbia",
       "deadline": "Sun, 15 Nov 2026 23:59:00 GMT",
       "location": "University of British Columbia",
-      "mode": "in_person"
-    },
-    {
-      "id": "brabble:devpost-32097",
-      "title": "Emory Hacks 2026",
-      "url": "https://brabble.ai/s/devpost-32097",
-      "description": "PROJECT Emory · via Devpost - Registration closes Sun, 15 Nov 2026 23:59:00 GMT - In person: Emory Univ. - Goizueta Business School",
-      "deadline": "Sun, 15 Nov 2026 23:59:00 GMT",
-      "location": "Emory Univ. - Goizueta Business School",
       "mode": "in_person"
     },
     {
@@ -735,24 +699,6 @@
       "mode": "online"
     },
     {
-      "id": "brabble:devpost-31663",
-      "title": "The Next Frontier 2026: A Space Innovation Hackathon",
-      "url": "https://brabble.ai/s/devpost-31663",
-      "description": "AI Collective · via Devpost - Registration closes Sun, 15 Nov 2026 23:59:00 GMT - In person: ECPI Virginia Beach Campus",
-      "deadline": "Sun, 15 Nov 2026 23:59:00 GMT",
-      "location": "ECPI Virginia Beach Campus",
-      "mode": "in_person"
-    },
-    {
-      "id": "brabble:devpost-30876",
-      "title": "Central Hacks",
-      "url": "https://brabble.ai/s/devpost-30876",
-      "description": "Central Michigan University · via Devpost - Registration closes Sun, 15 Nov 2026 23:59:00 GMT - Prize: $1,750 - In person: Central Michigan University Pearce Hall",
-      "deadline": "Sun, 15 Nov 2026 23:59:00 GMT",
-      "location": "Central Michigan University Pearce Hall",
-      "mode": "in_person"
-    },
-    {
       "id": "brabble:devpost-31200",
       "title": "Hack the Harvest",
       "url": "https://brabble.ai/s/devpost-31200",
@@ -798,15 +744,6 @@
       "mode": "in_person"
     },
     {
-      "id": "brabble:unstop-1779479",
-      "title": "AGENTIC X 2.0 – AI & Robotics Hackathon",
-      "url": "https://brabble.ai/s/unstop-1779479",
-      "description": "Woxsen University, Hyderabad · via Unstop - Registration closes Mon, 16 Nov 2026 18:30:00 GMT - In person: Hyderabad",
-      "deadline": "Mon, 16 Nov 2026 18:30:00 GMT",
-      "location": "Hyderabad",
-      "mode": "in_person"
-    },
-    {
       "id": "brabble:unstop-1799179",
       "title": "HACKRUSH 2026",
       "url": "https://brabble.ai/s/unstop-1799179",
@@ -816,13 +753,13 @@
       "mode": "online"
     },
     {
-      "id": "brabble:devpost-32096",
-      "title": "Fall 2026 Projects",
-      "url": "https://brabble.ai/s/devpost-32096",
-      "description": "PRODUCT@TAMU · via Devpost - Registration closes Mon, 16 Nov 2026 23:59:00 GMT - Online",
-      "deadline": "Mon, 16 Nov 2026 23:59:00 GMT",
-      "location": "Online",
-      "mode": "online"
+      "id": "brabble:unstop-1779479",
+      "title": "AGENTIC X 2.0 – AI & Robotics Hackathon",
+      "url": "https://brabble.ai/s/unstop-1779479",
+      "description": "Woxsen University, Hyderabad · via Unstop - Registration closes Mon, 16 Nov 2026 18:30:00 GMT - In person: Hyderabad",
+      "deadline": "Mon, 16 Nov 2026 18:30:00 GMT",
+      "location": "Hyderabad",
+      "mode": "in_person"
     },
     {
       "id": "brabble:devpost-31057",
@@ -888,20 +825,83 @@
       "mode": "in_person"
     },
     {
-      "id": "brabble:devfolio-c5731def845a4782ac461b66ceddced0",
-      "title": "Code N Mod",
-      "url": "https://brabble.ai/s/devfolio-c5731def845a4782ac461b66ceddced0",
-      "description": "See listing · via Devfolio - Registration closes Wed, 18 Nov 2026 02:45:00 GMT - In person: Tumakur",
-      "deadline": "Wed, 18 Nov 2026 02:45:00 GMT",
-      "location": "Tumakur",
-      "mode": "in_person"
-    },
-    {
       "id": "brabble:unstop-1763060",
       "title": "Building Medical Tourism Platform",
       "url": "https://brabble.ai/s/unstop-1763060",
       "description": "EthAum Venture Partners · via Unstop - Registration closes Wed, 18 Nov 2026 10:10:33 GMT - Online",
       "deadline": "Wed, 18 Nov 2026 10:10:33 GMT",
+      "location": "Online",
+      "mode": "online"
+    },
+    {
+      "id": "brabble:unstop-1800358",
+      "title": "HierroCTF 2026 – Capture The Flag (CTF) Competition",
+      "url": "https://brabble.ai/s/unstop-1800358",
+      "description": "Hierroshield Pvt Ltd · via Unstop - Registration closes Wed, 18 Nov 2026 12:30:00 GMT - In person: Pune",
+      "deadline": "Wed, 18 Nov 2026 12:30:00 GMT",
+      "location": "Pune",
+      "mode": "in_person"
+    },
+    {
+      "id": "brabble:devfolio-8b69c2039a8d4b4085c3869b9b25d9c9",
+      "title": "Lean In Hacks 8.0",
+      "url": "https://brabble.ai/s/devfolio-8b69c2039a8d4b4085c3869b9b25d9c9",
+      "description": "See listing · via Devfolio - Registration closes Wed, 18 Nov 2026 17:00:00 GMT - In person: See listing",
+      "deadline": "Wed, 18 Nov 2026 17:00:00 GMT",
+      "location": "See listing",
+      "mode": "in_person"
+    },
+    {
+      "id": "brabble:unstop-1781078",
+      "title": "Algonex 1.0",
+      "url": "https://brabble.ai/s/unstop-1781078",
+      "description": "Maya devi university · via Unstop - Registration closes Wed, 18 Nov 2026 18:29:00 GMT - Prize: ₹1.6L - In person: Dehradun",
+      "deadline": "Wed, 18 Nov 2026 18:29:00 GMT",
+      "location": "Dehradun",
+      "mode": "in_person"
+    },
+    {
+      "id": "brabble:hackerearth-https://www.hackerearth.com/challenges/hackathon/ibm-z-day/",
+      "title": "IBM Z Day",
+      "url": "https://brabble.ai/s/hackerearth-https%3A%2F%2Fwww.hackerearth.com%2Fchallenges%2Fhackathon%2Fibm-z-day%2F",
+      "description": "HackerEarth partner · via HackerEarth - Registration closes Wed, 18 Nov 2026 18:29:00 GMT - Online",
+      "deadline": "Wed, 18 Nov 2026 18:29:00 GMT",
+      "location": "Online",
+      "mode": "online"
+    },
+    {
+      "id": "brabble:devpost-31526",
+      "title": "GWC Projects Program Fall 2026",
+      "url": "https://brabble.ai/s/devpost-31526",
+      "description": "Girls Who Code UCF · via Devpost - Registration closes Wed, 18 Nov 2026 23:59:00 GMT - Online",
+      "deadline": "Wed, 18 Nov 2026 23:59:00 GMT",
+      "location": "Online",
+      "mode": "online"
+    },
+    {
+      "id": "brabble:devpost-31024",
+      "title": "Meta VR Start Developer Competition 2026",
+      "url": "https://brabble.ai/s/devpost-31024",
+      "description": "Meta · via Devpost - Registration closes Wed, 18 Nov 2026 23:59:00 GMT - Prize: $1,000,000 - Online",
+      "deadline": "Wed, 18 Nov 2026 23:59:00 GMT",
+      "location": "Online",
+      "mode": "online"
+    },
+    {
+      "id": "brabble:unstop-1769646",
+      "title": "Datanova 2026 Global Data-Thon - 1.7 Lakh prize money",
+      "url": "https://brabble.ai/s/unstop-1769646",
+      "description": "Swiss School of Management, Rome, Italy · via Unstop - Registration closes Thu, 19 Nov 2026 02:47:09 GMT - Prize: ₹2K - Online",
+      "deadline": "Thu, 19 Nov 2026 02:47:09 GMT",
+      "location": "Online",
+      "mode": "online"
+    },
+    {
+      "id": "brabble:internshala-13437",
+      "title": "DATANYX&#8217;26",
+      "url": "https://brabble.ai/s/internshala-13437",
+      "description": "Listed on Internshala · via Internshala - Registration closes Thu, 19 Nov 2026 18:29:00 GMT - Online",
+      "deadline": "Thu, 19 Nov 2026 18:29:00 GMT",
       "location": "Online",
       "mode": "online"
     }
