@@ -2,54 +2,9 @@
   "source": "Brabble.ai",
   "sourceUrl": "https://brabble.ai/hackathons",
   "feedUrl": "https://brabble.ai/rss/hackathons.xml",
-  "fetchedAt": "2026-11-14T17:59:29.984Z",
-  "feedBuiltAt": "Sat, 14 Nov 2026 17:59:29 GMT",
+  "fetchedAt": "2026-11-14T22:22:24.523Z",
+  "feedBuiltAt": "Sat, 14 Nov 2026 22:22:24 GMT",
   "events": [
-    {
-      "id": "brabble:unstop-1756262",
-      "title": "Avishkaar Season 4 (Virtual) Hackathon: A National-Level Innovation Challenge",
-      "url": "https://brabble.ai/s/unstop-1756262",
-      "description": "Aditya Institute of technology and management,tekkali · via Unstop - Registration closes Sat, 14 Nov 2026 18:29:00 GMT - Prize: ₹50K - Online",
-      "deadline": "Sat, 14 Nov 2026 18:29:00 GMT",
-      "location": "Online",
-      "mode": "online"
-    },
-    {
-      "id": "brabble:internshala-12642",
-      "title": "Global Virtual Hackathon 2026",
-      "url": "https://brabble.ai/s/internshala-12642",
-      "description": "Listed on Internshala · via Internshala - Registration closes Sat, 14 Nov 2026 18:29:00 GMT - Online",
-      "deadline": "Sat, 14 Nov 2026 18:29:00 GMT",
-      "location": "Online",
-      "mode": "online"
-    },
-    {
-      "id": "brabble:unstop-1751032",
-      "title": "Students of Global Impact",
-      "url": "https://brabble.ai/s/unstop-1751032",
-      "description": "International Foundation for Sustainable Peace and Development · via Unstop - Registration closes Sat, 14 Nov 2026 18:30:00 GMT - Online",
-      "deadline": "Sat, 14 Nov 2026 18:30:00 GMT",
-      "location": "Online",
-      "mode": "online"
-    },
-    {
-      "id": "brabble:unstop-1772221",
-      "title": "Vibe Forge",
-      "url": "https://brabble.ai/s/unstop-1772221",
-      "description": "Nims University (NU), Jaipur · via Unstop - Registration closes Sat, 14 Nov 2026 18:30:00 GMT - Prize: ₹15K - In person: Jaipur",
-      "deadline": "Sat, 14 Nov 2026 18:30:00 GMT",
-      "location": "Jaipur",
-      "mode": "in_person"
-    },
-    {
-      "id": "brabble:unstop-1770690",
-      "title": "Code Sprint",
-      "url": "https://brabble.ai/s/unstop-1770690",
-      "description": "University of Petroleum & Energy Studies (UPES), Dehradun · via Unstop - Registration closes Sat, 14 Nov 2026 18:30:00 GMT - Prize: ₹30K - In person: Dehradun",
-      "deadline": "Sat, 14 Nov 2026 18:30:00 GMT",
-      "location": "Dehradun",
-      "mode": "in_person"
-    },
     {
       "id": "brabble:devpost-31776",
       "title": "System Public Challenge",
@@ -904,6 +859,51 @@
       "deadline": "Fri, 20 Nov 2026 06:30:14 GMT",
       "location": "Online",
       "mode": "online"
+    },
+    {
+      "id": "brabble:unstop-1773229",
+      "title": "Out of Bounds - Web Game Development Hackathon (Paid)",
+      "url": "https://brabble.ai/s/unstop-1773229",
+      "description": "Code Variant · via Unstop - Registration closes Fri, 20 Nov 2026 07:50:20 GMT - Prize: ₹12K - Online",
+      "deadline": "Fri, 20 Nov 2026 07:50:20 GMT",
+      "location": "Online",
+      "mode": "online"
+    },
+    {
+      "id": "brabble:hackclub-0PvIqe",
+      "title": "Snowglobe",
+      "url": "https://brabble.ai/s/hackclub-0PvIqe",
+      "description": "Hack Club network · via Hack Club - Registration closes Fri, 20 Nov 2026 11:15:00 GMT - In person: San Francisco",
+      "deadline": "Fri, 20 Nov 2026 11:15:00 GMT",
+      "location": "San Francisco",
+      "mode": "in_person"
+    },
+    {
+      "id": "brabble:unstop-1800629",
+      "title": "HackKumbh 2026 : Tech For Humanity",
+      "url": "https://brabble.ai/s/unstop-1800629",
+      "description": "Yeshwantrao Chavan College of Engineering (YCCE), Nagpur · via Unstop - Registration closes Fri, 20 Nov 2026 18:29:00 GMT - Prize: ₹2.3L - In person: Nagpur",
+      "deadline": "Fri, 20 Nov 2026 18:29:00 GMT",
+      "location": "Nagpur",
+      "mode": "in_person"
+    },
+    {
+      "id": "brabble:unstop-1773675",
+      "title": "StarForge : 24-Hour National Level Hackathon",
+      "url": "https://brabble.ai/s/unstop-1773675",
+      "description": "BMS Institute of Technology and Management (BMSITM), Bangalore · via Unstop - Registration closes Fri, 20 Nov 2026 18:29:00 GMT - Prize: ₹65K - In person: Bangalore",
+      "deadline": "Fri, 20 Nov 2026 18:29:00 GMT",
+      "location": "Bangalore",
+      "mode": "in_person"
+    },
+    {
+      "id": "brabble:unstop-1772235",
+      "title": "Hacknova'27 2.0",
+      "url": "https://brabble.ai/s/unstop-1772235",
+      "description": "Bharati Vidyapeeth (Deemed to be University) · via Unstop - Registration closes Fri, 20 Nov 2026 18:29:00 GMT - Prize: ₹1.4L - In person: Kharghar",
+      "deadline": "Fri, 20 Nov 2026 18:29:00 GMT",
+      "location": "Kharghar",
+      "mode": "in_person"
     }
   ]
 }
