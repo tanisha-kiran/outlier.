@@ -4,7 +4,7 @@ const url=import.meta.env.VITE_SUPABASE_URL,key=import.meta.env.VITE_SUPABASE_PU
 const initialAuthHash=new URLSearchParams(location.hash.slice(1));
 const recoveryInHash=initialAuthHash.get('type')==='recovery';
 const recoveryError=initialAuthHash.has('error')||initialAuthHash.has('error_code');
-const client=url&&key?createClient(url,key,{auth:{flowType:'implicit',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}}):null;
+export const client=url&&key?createClient(url,key,{auth:{flowType:'implicit',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}}):null;
 const invite='https://chat.whatsapp.com/LF2QHd9GkTqHy8EhScscpe';
 const options=['Computer Science','AI / ML / Data Science','Information Science','Electronics / ECE','Mechanical','Civil','Electrical / EEE','Aerospace','Biomedical','Other'];
 const departments=options.map(x=>`<option>${x}</option>`).join('');
@@ -13,7 +13,7 @@ export function startGate({onUnlock,onLock}){
  let current=null,profile=null;
  const recoveryRequested=new URLSearchParams(location.search).get("reset")==="1"||recoveryInHash;
  let recoveryObserved=false;
- const shell=(step,title,content)=>{gate.innerHTML=`<div class="gate-panel"><div class="gate-head"><span>✳ OUTLIER<span class="red-dot">.</span></span><span class="gate-step">${step}</span></div><div class="gate-body"><div class="gate-kicker"><span class="gate-spark">✳</span> A COMMUNITY FOR THE CURIOUS</div><h2>${title}</h2>${content}<p class="gate-note" id="gate-message" aria-live="polite"></p></div><div class="gate-foot">DR. ACS COLLEGE OF ENGINEERING &nbsp; ✳ &nbsp; BENGALURU</div></div>`};
+ const shell=(step,title,content)=>{gate.innerHTML=`<div class="gate-panel"><div class="gate-head"><span>✳ OUTLIER<span class="red-dot">.</span></span><span class="gate-step">${step}</span></div><div class="gate-body"><div class="gate-kicker"><span class="gate-spark">✳</span> A COMMUNITY FOR THE CURIOUS</div><h2>${title}</h2>${content}<p class="gate-note" id="gate-message" aria-live="polite"></p></div><div class="gate-foot">DR. ACS COLLEGE OF ENGINEERING &nbsp; ✳ &nbsp; BENGALURU <a href="/events">Browse public Events</a></div></div>`};
  const say=(msg,error=false)=>{const el=gate.querySelector('#gate-message');if(el){el.textContent=msg;el.classList.toggle('gate-error',error)}};
  const busy=(form,on)=>form.querySelectorAll('button,input,select').forEach(e=>e.disabled=on);
  const bindPasswordToggles=()=>gate.querySelectorAll('[data-toggle-password]').forEach(button=>{button.onclick=()=>{const input=gate.querySelector('#'+button.dataset.togglePassword);if(!input)return;const visible=input.type==='password';input.type=visible?'text':'password';button.textContent=visible?'Hide':'Show';button.setAttribute('aria-pressed',String(visible));button.setAttribute('aria-label',visible?'Hide password':'Show password')}});

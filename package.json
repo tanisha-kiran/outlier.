@@ -1,1 +1,21 @@
-{"name":"outlier-vite","version":"1.0.0","type":"module","scripts":{"dev":"vite --host 127.0.0.1","build":"vite build","preview":"vite preview --host 127.0.0.1"},"dependencies":{"@supabase/supabase-js":"^2.119.0","fast-xml-parser":"^5.12.0","three":"^0.180.0","vite":"^7.1.0"},"packageManager":"pnpm@10.20.0"}
+{
+  "name": "outlier-vite",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --test tests/events.test.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
+    "fast-xml-parser": "^5.12.0",
+    "three": "^0.180.0",
+    "vite": "^7.1.0"
+  },
+  "packageManager": "pnpm@10.20.0",
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.17"
+  }
+}
