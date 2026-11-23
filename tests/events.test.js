@@ -4,6 +4,31 @@ import { readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
 import { splitEvents, registrationState, submissionOpen, fromIstInput, toIstInput, httpsUrl, escapeHtml } from '../src/event-model.js';
 
+test('multi-college registration preserves school identity and isolates student records', async () => {
+ const db = new PGlite();
+ try {
+  await db.exec(`create role anon; create role authenticated; create schema auth;
+    create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb not null default '{}');
+    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
+    grant usage on schema auth to anon,authenticated; grant execute on function auth.uid() to anon,authenticated;`);
+  for (const file of ['001_outlier.sql','002_registration_details.sql','003_community_events.sql']) await db.exec(await readFile(new URL('../supabase/'+file, import.meta.url),'utf8'));
+  const old='00000000-0000-0000-0000-000000000001', other='00000000-0000-0000-0000-000000000002';
+  await db.query(`insert into auth.users(id,email,raw_user_meta_data) values($1,'old@example.test',$2)`,[old,JSON.stringify({full_name:'First Student',usn:'12345',department:'Civil',year:2})]);
+  await db.exec(await readFile(new URL('../supabase/004_multicollege.sql', import.meta.url),'utf8'));
+  await db.query(`insert into auth.users(id,email,raw_user_meta_data) values($1,'other@example.test',$2)`,[other,JSON.stringify({full_name:'Other Student',college:'Another College',usn:'12345',department:'Civil',year:2})]);
+  assert.deepEqual((await db.query('select college from public.profiles order by id')).rows.map(x=>x.college),['Dr. ACS College of Engineering','Another College']);
+  await db.exec(`update public.profiles set whatsapp_acknowledged_at=now(); update public.events set status='published',registration_mode='native',starts_at=now()+interval '1 day',ends_at=now()+interval '2 days',deadline=now()+interval '1 hour',capacity=10 where slug='play-for-a-purpose';`);
+  const eid=(await db.query(`select id from public.events where slug='play-for-a-purpose'`)).rows[0].id;
+  for (const id of [old,other]) {
+   await db.query(`select set_config('request.jwt.claim.sub',$1,false)`,[id]); await db.exec('set role authenticated');
+   await db.query(`select public.register_for_event($1,'solo','','','9876543210','{}',true,false)`,[eid]);
+   assert.equal((await db.query('select * from public.event_participants')).rows.length,1);
+   await db.exec('reset role');
+  }
+  assert.deepEqual((await db.query('select college from public.event_participants order by user_id')).rows.map(x=>x.college),['Dr. ACS College of Engineering','Another College']);
+ } finally { await db.close(); }
+});
+
 test('event sorting, privacy filtering, deadlines and IST conversions',()=>{
  const now=Date.parse('2026-11-21T10:00:00Z');
  const base={is_community:true,status:'published',starts_at:'2026-11-22T10:00:00Z',registration_mode:'native',deadline:'2026-11-21T10:00:00Z'};
@@ -20,11 +45,11 @@ test('event sorting, privacy filtering, deadlines and IST conversions',()=>{
 test('real PostgreSQL migration, RLS and registration/submission lifecycle',async()=>{
  const db=new PGlite();
  try {
- await db.exec(`create role anon; create role authenticated; create schema auth;
+ await db.exec(`create role anon; create role authenticated; create role service_role; create schema auth;
  create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb not null default '{}');
  create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
  grant usage on schema auth to anon,authenticated; grant execute on function auth.uid() to anon,authenticated;`);
- for(const file of ['001_outlier.sql','002_registration_details.sql','003_community_events.sql']) await db.exec(await readFile(new URL('../supabase/'+file,import.meta.url),'utf8'));
+ for(const file of ['001_outlier.sql','002_registration_details.sql','003_community_events.sql','004_multicollege.sql']) await db.exec(await readFile(new URL('../supabase/'+file,import.meta.url),'utf8'));
  const ids=['00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-000000000003','00000000-0000-0000-0000-000000000004'];
  for(let i=0;i<ids.length;i++) await db.query(`insert into auth.users(id,email,raw_user_meta_data) values($1,$2,$3)`,[ids[i],i===0?'tanishakiran0909@gmail.com':`student${i}@example.test`,JSON.stringify({full_name:i===0?'Tanisha Kiran':`Student ${i}`,usn:`USN${i}`,department:'Computer Science',year:2})]);
  await db.exec(await readFile(new URL('../supabase/admin_access.sql',import.meta.url),'utf8'));
@@ -39,9 +64,14 @@ test('real PostgreSQL migration, RLS and registration/submission lifecycle',asyn
  await db.query(`insert into public.event_photos(event_id,image_url,alt,status) values($1,'https://example.test/photo.jpg','Students building a game','published'),($1,'https://example.test/draft.jpg','A private photo','draft')`,[eid]);
  await as('anon');assert.equal((await db.query('select * from public.events')).rows.length,1);assert.equal((await db.query('select * from public.event_photos')).rows.length,1);assert.equal((await db.query('select * from public.opportunity_catalog')).rows.length,0);
  await assert.rejects(db.exec('select * from public.event_participants'),/permission denied/);
- const register=async(kind='solo',code='',answers={purpose:'Learn and build'})=>(await db.query(`select public.register_for_event($1,$2,'Orbit team',$3,'9876543210',$4,true,false) as id`,[eid,kind,code,JSON.stringify(answers)])).rows[0].id;
+ await db.exec('reset role');
+ await db.exec(await readFile(new URL('../supabase/005_rsvp_notifications.sql',import.meta.url),'utf8'));
+ const register=async(kind='solo',code='',answers={purpose:'Learn and build',github:'https://github.com/student',linkedin:'https://www.linkedin.com/in/student',motivation:'I want to learn and build games.'})=>(await db.query(`select public.register_for_event($1,$2,'Orbit team',$3,'9876543210',$4,true,false) as id`,[eid,kind,code,JSON.stringify(answers)])).rows[0].id;
  await as('authenticated',ids[1]);await assert.rejects(register('solo','',{}),/Please answer/);
  await assert.rejects(db.query(`select public.register_for_event($1,'solo','','','9876543210','{}',false,false)`,[eid]),/Accept the event rules/);
+ await assert.rejects(register('team','',{purpose:'Build',github:'https://evil.test/me',linkedin:'https://linkedin.com/in/student',motivation:'I want to build games.'}),/GitHub/);
+ await db.exec('reset role');assert.equal((await db.query('select * from public.rsvp_email_queue')).rows.length,0);
+ await as('authenticated',ids[1]);
  const rid=await register('team');await assert.rejects(register(),/already registered/);
  const code=(await db.query('select invite_code from public.event_registrations')).rows[0].invite_code;
  const payload={title:'Purpose game',overview:'A playable game that helps students learn recycling.',repository_url:'https://example.test/repo',demo_url:'https://example.test/demo'};
@@ -58,6 +88,8 @@ test('real PostgreSQL migration, RLS and registration/submission lifecycle',asyn
  await as('authenticated',ids[3]);await assert.rejects(register(),/not open/);
  await as('authenticated',ids[1]);await assert.rejects(submit(),/submissions are closed/);
  await as('authenticated',ids[0]);assert.equal((await db.query('select * from public.event_participants')).rows.length,2);
+ await assert.rejects(db.query('select * from public.rsvp_email_queue'),/permission denied/);
+ await db.exec('reset role');assert.equal((await db.query('select * from public.rsvp_email_queue')).rows.length,1);await as('authenticated',ids[0]);
  await db.query(`update public.events set status='draft' where id=$1`,[eid]);
  await as('anon');assert.equal((await db.query('select * from public.events')).rows.length,0);assert.equal((await db.query('select * from public.event_photos')).rows.length,0);
  await as('authenticated',ids[0]);

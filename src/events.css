@@ -7,3 +7,47 @@
 .event-hero::before{display:block;margin-bottom:20px}.nav nav{font-size:14px}
 
 .gate-foot a{display:inline-block;margin-left:12px;text-decoration:underline}
+
+.admin-auth{max-width:620px;gap:16px}.admin-password{display:flex;align-items:stretch;gap:10px}.admin-password input{flex:1;min-width:0}.admin-password button{flex-shrink:0;min-width:80px}.admin-auth label{line-height:1.5}.admin-auth input{min-height:48px}
+
+/* Editorial event presentation, using the existing OUTLIER identity. */
+.events-page{background:radial-gradient(ellipse at 100% 0%,#512238 0,transparent 45%),#170c18}
+.events-page .event-hero{position:relative;padding:48px 0 64px;border-bottom:1px solid #81556955;margin-bottom:32px;background:none}
+.events-page .event-hero h1{max-width:1000px;font-size:clamp(44px,7vw,92px);letter-spacing:-.065em;line-height:1.04}
+.events-page .event-hero p{font-size:18px;line-height:1.8}
+.event-cover{display:block;margin-top:36px;max-height:560px;aspect-ratio:16/9;object-fit:contain;background:#110b13;border:1px solid #a3778855;border-radius:20px;box-shadow:0 24px 65px #0005}
+.hub-card{padding:24px;border-radius:20px;background:linear-gradient(145deg,#422036,#291526);border-color:#a3778844;box-shadow:0 12px 35px #0002;transition:transform .2s,border-color .2s}
+.hub-card:hover{transform:translateY(-4px);border-color:#e6a8ba}
+.hub-card>img{height:220px;object-fit:contain;background:#160b17;border-radius:12px;margin-bottom:10px}
+.event-tag{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.hub-card h3{font-size:30px;line-height:1.15}.hub-card p{color:#e0c9d4}
+.event-panel{padding:30px;border-radius:18px;border-color:#9e708344;background:#321a2bcc;box-shadow:0 10px 30px #0001}
+.event-panel h2{font-size:25px;margin-bottom:20px}.event-copy{line-height:1.9;color:#ebd6df;font-size:17px}
+.detail-grid aside>.event-panel{position:sticky;top:24px;border-top:3px solid #ebb8c7;background:#422238}
+.detail-grid aside strong{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#f4bdce}
+.event-button{border-radius:9px;padding:14px 20px}.event-actions{gap:10px}
+.event-image-fallback{min-height:220px;display:grid;place-content:center;text-align:center;background:radial-gradient(circle at 30% 20%,#74506c,#23152d 70%);border-radius:16px;color:#f3d9e5}.event-image-fallback span{font-size:90px;line-height:1}.event-image-fallback p{font-size:12px;letter-spacing:.2em}
+@media(max-width:600px){.event-cover{aspect-ratio:auto;max-height:450px}.event-panel{padding:22px}.event-hero{padding-top:20px}.hub-card>img{height:240px}}
+@media(prefers-reduced-motion:reduce){.hub-card{transition:none}.hub-card:hover{transform:none}}
+
+/* Comfortable navigation spacing across laptop and touch layouts. */
+.nav{gap:28px}
+.nav nav{gap:clamp(24px,2.5vw,42px);flex-shrink:0}
+.nav nav>a,.events-menu>summary{display:flex;align-items:center;min-height:44px;white-space:nowrap;line-height:1.5}
+.events-menu>summary{gap:8px;list-style:none}
+.events-menu>summary::-webkit-details-marker{display:none}
+.events-menu>summary::after{content:'⌄';font-size:16px}
+.events-menu>div{top:100%;min-width:250px;padding:14px;gap:8px;border-radius:12px}
+.events-menu>div a{padding:14px 16px;line-height:1.5;border-radius:7px}
+.events-menu>div a:hover{background:#ffffff0d}
+@media(max-width:1150px){
+ .nav{gap:16px}
+ .nav nav{display:none}
+ .mobile-menu,.events-page .mobile-menu{display:block;margin-left:auto;min-height:44px;padding:10px 18px;background:transparent;color:inherit;border:1px solid #b7798b;border-radius:6px}
+ .nav>.nav-button{display:none}
+ .nav nav.mobile-open{display:flex;position:absolute;top:100%;left:0;right:0;padding:24px clamp(20px,5vw,48px) 30px;align-items:stretch;flex-direction:column;gap:12px;background:#321329;z-index:50;max-height:calc(100dvh - 82px);overflow-y:auto;box-shadow:0 20px 30px #17071644}
+ .nav nav>a,.events-menu>summary{padding:10px 4px;min-height:48px}
+ .events-menu>summary{justify-content:space-between}
+ .events-menu>div{position:static;margin:8px 0 6px;padding:8px 12px;min-width:0;gap:8px;box-shadow:none;background:#ffffff05}
+ .events-menu>div a{padding:14px 12px}
+}

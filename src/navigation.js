@@ -3,7 +3,7 @@ export function setupNavigation() {
   const nav = document.querySelector('.nav nav');
   if (!nav) return;
   nav.id = 'main-navigation';
-  nav.innerHTML = `<a href="/#opportunities">Discover</a><details class="events-menu"><summary>Events</summary><div><a href="/events">All Events</a><a href="/events#upcoming">Upcoming Events</a><a href="/events#past">Past Events &amp; Results</a><a href="/events#gallery">Gallery</a></div></details><a href="/#community">Our Community</a><a href="/#about">About</a>`;
+  nav.innerHTML = `<a href="/#opportunities">Discover</a><details class="events-menu"><summary>Events</summary><div><a href="/events">All Events</a><a href="/events#upcoming">Upcoming Events</a><a href="/events#past">Past Events &amp; Results</a><a href="/events#gallery">Gallery</a></div></details><a href="/events/me">My events</a><a href="/#community">Our Community</a><a href="/#about">About</a>`;
   const toggle = document.createElement('button');
   toggle.className = 'mobile-menu'; toggle.textContent = 'Menu';
   toggle.setAttribute('aria-controls', nav.id); toggle.setAttribute('aria-expanded', 'false');
