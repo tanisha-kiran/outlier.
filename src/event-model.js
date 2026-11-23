@@ -15,3 +15,13 @@ export function splitEvents(events, now = Date.now()) {
 export function ist(value) { return value ? new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'}).format(new Date(value))+' IST' : 'To be announced'; }
 export function toIstInput(value) { return value ? new Date(Date.parse(value)+330*60000).toISOString().slice(0,16) : ''; }
 export function fromIstInput(value) { return value ? new Date(value+':00+05:30').toISOString() : null; }
+
+export function googleFormUrl(value) {
+  try { const url=new URL(value); return url.protocol==='https:' && !url.username && !url.password && !url.port && ((url.hostname==='forms.gle' && url.pathname.length>1) || (url.hostname==='docs.google.com' && url.pathname.startsWith('/forms/'))) ? url.href : ''; } catch { return ''; }
+}
+export function submissionFormState(e,now=Date.now()) {
+  if(!googleFormUrl(e.submission_form_url)) return 'Submission form coming soon';
+  if(e.submission_deadline && now>=Date.parse(e.submission_deadline)) return 'Submissions closed';
+  if(e.submission_opens_at && now<Date.parse(e.submission_opens_at)) return 'Submissions open soon';
+  return 'Submit project on Google Forms';
+}

@@ -180,7 +180,5 @@ begin
 end $$;
 create trigger validate_community_event before insert or update on public.events for each row execute function public.validate_community_event();
 
-insert into public.events(slug,title,organizer,description,mode,category,is_community,capacity,prize,eligibility,rules,status)
-values('play-for-a-purpose','Play for a Purpose','OUTLIER','A proposed eight-hour game and gamification hackathon for Dr. ACS College of Engineering students. Build a game that makes a meaningful difference. Date, venue, team limits and registration details will be confirmed before registration opens.','offline','Hackathon',true,100,'Proposed prizes: 1st ₹3,000 · 2nd ₹2,000 · 3rd ₹1,000','Dr. ACS College of Engineering students','Respect other participants, credit third-party work, and follow the organizer’s published event rules. Final rules will be announced before registration opens.','draft')
-on conflict(slug) do nothing;
+-- New installations start with no community events.
 commit;

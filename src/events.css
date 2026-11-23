@@ -7,3 +7,4 @@
 .event-hero::before{display:block;margin-bottom:20px}.nav nav{font-size:14px}
 
 .gate-foot a{display:inline-block;margin-left:12px;text-decoration:underline}
+.team-code{display:block;width:100%;box-sizing:border-box;background:#241020;color:#fff1e8;border:1px solid #a37788;border-radius:6px;font:16px monospace;padding:12px;margin:10px 0 16px}.event-panel label:has(.team-code){display:block;font-size:16px}

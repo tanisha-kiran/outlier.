@@ -2,10 +2,17 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
-import { splitEvents, registrationState, submissionOpen, fromIstInput, toIstInput, httpsUrl, escapeHtml } from '../src/event-model.js';
+import { splitEvents, registrationState, submissionOpen, googleFormUrl, submissionFormState, fromIstInput, toIstInput, httpsUrl, escapeHtml } from '../src/event-model.js';
 
 test('event sorting, privacy filtering, deadlines and IST conversions',()=>{
  const now=Date.parse('2026-11-21T10:00:00Z');
+ assert.equal(googleFormUrl('https://forms.gle/example'),'https://forms.gle/example');
+ assert.equal(googleFormUrl('https://docs.google.com/forms/d/e/test/viewform'),'https://docs.google.com/forms/d/e/test/viewform');
+ assert.equal(googleFormUrl('https://forms.gle.evil.test/example'),'');
+ assert.equal(googleFormUrl('javascript:alert(1)'),'');
+ assert.equal(submissionFormState({submission_form_url:'https://forms.gle/example'},now),'Submit project on Google Forms');
+ assert.equal(submissionFormState({submission_form_url:'https://forms.gle/example',submission_deadline:'2026-11-21T10:00:00Z'},now),'Submissions closed');
+ assert.equal(submissionFormState({submission_form_url:'https://forms.gle/example',submission_opens_at:'2026-11-22T10:00:00Z'},now),'Submissions open soon');
  const base={is_community:true,status:'published',starts_at:'2026-11-22T10:00:00Z',registration_mode:'native',deadline:'2026-11-21T10:00:00Z'};
  assert.equal(registrationState(base,now),'Registration Closed');
  assert.equal(registrationState({...base,deadline:'2026-11-21T10:00:01Z'},now),'Register');
@@ -35,6 +42,7 @@ test('real PostgreSQL migration, RLS and registration/submission lifecycle',asyn
  await as('authenticated',ids[1]);assert.equal((await db.query('select public.is_admin() as admin')).rows[0].admin,false);
  await assert.rejects(db.exec(`insert into public.events(slug,title,organizer,description,mode) values('bad','Bad event','OUTLIER','This should not be accepted','online')`),/row-level security/);
  await as('authenticated',ids[0]);assert.equal((await db.query('select public.is_admin() as admin')).rows[0].admin,true);
+ await db.exec(`insert into public.events(slug,title,organizer,description,mode,is_community,status) values('play-for-a-purpose','Play for a Purpose','OUTLIER','A test event for registration lifecycle.','offline',true,'draft')`);
  const eid=(await db.query(`update public.events set status='published',registration_mode='native',starts_at=now()+interval '1 day',ends_at=now()+interval '2 days',deadline=now()+interval '1 hour',capacity=2,min_team=2,max_team=2,submission_opens_at=now()-interval '1 hour',submission_deadline=now()+interval '2 hours',registration_questions='[{"id":"purpose","label":"Your motivation?","type":"text","required":true}]' where slug='play-for-a-purpose' returning id`)).rows[0].id;
  await db.query(`insert into public.event_photos(event_id,image_url,alt,status) values($1,'https://example.test/photo.jpg','Students building a game','published'),($1,'https://example.test/draft.jpg','A private photo','draft')`,[eid]);
  await as('anon');assert.equal((await db.query('select * from public.events')).rows.length,1);assert.equal((await db.query('select * from public.event_photos')).rows.length,1);assert.equal((await db.query('select * from public.opportunity_catalog')).rows.length,0);
@@ -70,5 +78,33 @@ test('real PostgreSQL migration, RLS and registration/submission lifecycle',asyn
  await as('authenticated',ids[0]);
  await db.exec(`insert into public.events(slug,title,organizer,description,mode,status,deadline,apply_url,source_url) values('external-test','External opportunity','Other organizer','An unchanged external opportunity listing.','online','published',now()+interval '1 day','https://example.test/apply','https://example.test/source')`);
  await as('anon');assert.equal((await db.query('select title from public.opportunity_catalog')).rows[0].title,'External opportunity');
+
+ await db.exec('reset role');
+ await db.exec(await readFile(new URL('../supabase/005_simple_event_submissions.sql',import.meta.url),'utf8'));
+ await as('authenticated',ids[1]);
+ await assert.rejects(db.query('select public.save_event_submission($1,$2,true)',[rid,JSON.stringify(payload)]),/permission denied/);
+ await assert.rejects(db.query("insert into public.event_winners(event_id,place,entry_name,project_title) values($1,1,'Our team','Our project')",[eid]),/row-level security/);
+ await as('authenticated',ids[0]);
+ await assert.rejects(db.query("update public.events set submission_form_url='https://forms.gle.evil.test/form' where id=$1",[eid]),/check constraint/);
+ await db.query("update public.events set submission_form_url='https://forms.gle/test-form' where id=$1",[eid]);
+ const wid=(await db.query("insert into public.event_winners(event_id,place,entry_name,project_title,project_url) values($1,1,'Orbit team','Purpose game','https://drive.google.com/file/d/example/view') returning id",[eid])).rows[0].id;
+ assert.equal((await db.query('select count(*)::int as n from public.event_participants')).rows[0].n,3);
+ assert.equal((await db.query('select count(distinct invite_code)::int as n from public.event_registrations')).rows[0].n,2);
+ await as('anon');assert.equal((await db.query('select * from public.event_winners')).rows.length,0);
+ await as('authenticated',ids[0]);await db.query("update public.event_winners set status='published' where id=$1",[wid]);
+ await as('anon');assert.equal((await db.query('select * from public.event_winners')).rows.length,0);
+ await as('authenticated',ids[0]);await db.query("update public.events set status='published' where id=$1",[eid]);
+ await as('anon');assert.equal((await db.query('select project_title from public.event_winners')).rows[0].project_title,'Purpose game');
+ await as('authenticated',ids[0]);await db.query("update public.event_winners set project_title='Updated project' where id=$1",[wid]);
+ await as('anon');assert.equal((await db.query('select project_title from public.event_winners')).rows[0].project_title,'Updated project');
+ await as('authenticated',ids[0]);await db.query("update public.event_winners set status='draft' where id=$1",[wid]);
+ await as('anon');assert.equal((await db.query('select * from public.event_winners')).rows.length,0);
+ await db.exec('reset role');await db.exec(await readFile(new URL('../supabase/006_registration_references.sql',import.meta.url),'utf8'));
+ const references=(await db.query('select reference_code from public.event_registrations order by reference_code')).rows;assert.equal(references.length,2);assert.match(references[0].reference_code,/^PFP-AI[0-9]{3,}$/);
+ await as('authenticated',ids[0]);await db.query("update public.events set deadline=now()+interval '1 hour' where id=$1",[eid]);
+ await as('authenticated',ids[3]);const newReg=(await db.query("select public.register_for_event($1,'team','Another team','','9876543210',$2,true,false,$3) as id",[eid,JSON.stringify({purpose:'Build'}),JSON.stringify([{name:'Friend Name',email:'friend@example.test'}])])).rows[0].id;
+ assert.match((await db.query('select reference_code from public.event_registrations where id=$1',[newReg])).rows[0].reference_code,/^PFP-AI[0-9]{3,}$/);
+ assert.equal((await db.query('select * from public.event_invited_members')).rows.length,1);
+ await as('authenticated',ids[1]);assert.equal((await db.query('select * from public.event_invited_members')).rows.length,0);
  } finally {await db.close();}
 });
