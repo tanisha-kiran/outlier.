@@ -133,9 +133,11 @@ test('real PostgreSQL migration, RLS and registration/submission lifecycle',asyn
  await as('anon');assert.equal((await db.query('select * from public.event_winners')).rows.length,0);
  await db.exec('reset role');await db.exec(await readFile(new URL('../supabase/006_registration_references.sql',import.meta.url),'utf8'));
  const references=(await db.query('select reference_code from public.event_registrations order by reference_code')).rows;assert.equal(references.length,2);assert.match(references[0].reference_code,/^PFP-AI[0-9]{3,}$/);
+ await db.exec(await readFile(new URL('../supabase/007_reference_format.sql',import.meta.url),'utf8'));
+ assert.equal((await db.query("select 'PFP-AI'||lpad(n::text,greatest(3,length(n::text)),'0') as code from (values (1),(999),(1000)) v(n)")).rows.map(r=>r.code).join(','),'PFP-AI001,PFP-AI999,PFP-AI1000');
  await as('authenticated',ids[0]);await db.query("update public.events set deadline=now()+interval '1 hour' where id=$1",[eid]);
  await as('authenticated',ids[3]);const newReg=(await db.query("select public.register_for_event($1,'team','Another team','','9876543210',$2,true,false,$3) as id",[eid,JSON.stringify({purpose:'Build',github:'https://github.com/student',linkedin:'https://linkedin.com/in/student',motivation:'I want to build games.'}),JSON.stringify([{name:'Friend Name',email:'friend@example.test'}])])).rows[0].id;
- assert.match((await db.query('select reference_code from public.event_registrations where id=$1',[newReg])).rows[0].reference_code,/^PFP-AI[0-9]{3,}$/);
+ assert.equal((await db.query('select reference_code from public.event_registrations where id=$1',[newReg])).rows[0].reference_code,'PFP-AI003');
  assert.equal((await db.query('select * from public.event_invited_members')).rows.length,1);
  await as('authenticated',ids[1]);assert.equal((await db.query('select * from public.event_invited_members')).rows.length,0);
  } finally {await db.close();}
