@@ -1,10 +1,10 @@
 begin;
 create sequence public.event_reference_sequence start 1;
 alter table public.event_registrations add column reference_code text;
-update public.event_registrations set reference_code='PFP-AI'||lpad(nextval('public.event_reference_sequence')::text,3,'0');
+update public.event_registrations set reference_code='PFP-AI'||to_char(nextval('public.event_reference_sequence'),'FM000999999999999999');
 alter table public.event_registrations alter column reference_code set not null;
 alter table public.event_registrations add constraint event_reference_unique unique(reference_code);
-create function public.assign_event_reference() returns trigger language plpgsql security definer set search_path='' as $$ begin new.reference_code:='PFP-AI'||lpad(nextval('public.event_reference_sequence')::text,3,'0'); return new; end $$;
+create function public.assign_event_reference() returns trigger language plpgsql security definer set search_path='' as $$ begin new.reference_code:='PFP-AI'||to_char(nextval('public.event_reference_sequence'),'FM000999999999999999'); return new; end $$;
 create trigger assign_event_reference before insert on public.event_registrations for each row execute function public.assign_event_reference();
 create table public.event_invited_members(registration_id uuid not null references public.event_registrations on delete cascade, name text not null check(length(trim(name)) between 2 and 100), email text not null check(length(email)<=254 and email ~* '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$'));
 alter table public.event_invited_members enable row level security;

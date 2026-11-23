@@ -1,0 +1,9 @@
+.rsvp-space{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;opacity:.085;background-image:radial-gradient(#cbeaff 1px,transparent 1px);background-size:61px 79px}
+.rsvp-page #app{position:relative;z-index:1}.rsvp-page .event-panel,.rsvp-page fieldset{background:#241626ed;backdrop-filter:blur(4px)}
+.pixel-flight{position:absolute;top:calc(8% + var(--i)*15%);left:-160px;width:110px;color:#8e9fdc;animation:pixel-cruise 36s linear infinite;animation-delay:calc(var(--i)*-7s)}
+.pixel-flight svg{display:block;width:100%;filter:drop-shadow(0 0 6px #859bd9)}
+.pixel-flight span{position:absolute;left:135%;top:45%;height:3px;width:24px;background:#cbeaff;box-shadow:60px 0 #cbeaff;animation:pixel-shot 5s linear infinite}
+@keyframes pixel-cruise{to{transform:translateX(calc(100vw + 320px))}}
+@keyframes pixel-shot{from{transform:translateX(0);opacity:0}10%,65%{opacity:1}to{transform:translateX(400px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.pixel-flight{animation:none;left:calc(var(--i)*17%)}.pixel-flight span{animation:none;display:none}}
+.rsvp-alerts{margin:24px 0;padding:24px;border:1px solid #b88fa655;border-radius:16px;background:#2b1829}.rsvp-alerts h2{font-size:24px;margin:0 0 12px}.rsvp-alerts ul{padding-left:20px;line-height:1.8}.rsvp-alerts button{margin-top:12px}.rsvp-totals{font-size:18px;color:#f5d8c0}

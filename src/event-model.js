@@ -1,5 +1,14 @@
 export const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function httpsUrl(value) { try { const u = new URL(value); return u.protocol === 'https:' ? u.href : ''; } catch { return ''; } }
+export function eventImageUrl(value) {
+ const safe=httpsUrl(value); if(!safe)return '';
+ const u=new URL(safe);
+ if(u.hostname==='drive.google.com') {
+  const id=u.pathname.match(/^\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1] || u.searchParams.get('id');
+  if(id && /^[a-zA-Z0-9_-]+$/.test(id))return `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w1600`;
+ }
+ return safe;
+}
 export function completed(e, now = Date.now()) { return Boolean((e.ends_at || e.starts_at) && Date.parse(e.ends_at || e.starts_at) <= now); }
 export function registrationState(e, now = Date.now()) {
   if (completed(e, now)) return 'Event Completed';
