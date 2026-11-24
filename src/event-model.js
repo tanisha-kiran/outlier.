@@ -1,5 +1,8 @@
 export const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function httpsUrl(value) { try { const u = new URL(value); return u.protocol === 'https:' ? u.href : ''; } catch { return ''; } }
+export function eventCoverUrl(event) {
+ return event.slug === 'play-for-a-purpose' ? '/play-for-a-purpose-cover.png' : eventImageUrl(event.cover_url);
+}
 export function eventImageUrl(value) {
  const safe=httpsUrl(value); if(!safe)return '';
  const u=new URL(safe);

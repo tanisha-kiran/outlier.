@@ -7,3 +7,30 @@
 @keyframes pixel-shot{from{transform:translateX(0);opacity:0}10%,65%{opacity:1}to{transform:translateX(400px);opacity:0}}
 @media(prefers-reduced-motion:reduce){.pixel-flight{animation:none;left:calc(var(--i)*17%)}.pixel-flight span{animation:none;display:none}}
 .rsvp-alerts{margin:24px 0;padding:24px;border:1px solid #b88fa655;border-radius:16px;background:#2b1829}.rsvp-alerts h2{font-size:24px;margin:0 0 12px}.rsvp-alerts ul{padding-left:20px;line-height:1.8}.rsvp-alerts button{margin-top:12px}.rsvp-totals{font-size:18px;color:#f5d8c0}
+
+/* Keep every detail of the supplied event poster visible. */
+img[src="/play-for-a-purpose-cover.png"]{object-fit:contain!important;height:auto!important;aspect-ratio:auto!important;max-height:none!important;background:#10084c}
+/* Play for a Purpose: a brighter arcade sky behind solid, readable forms. */
+body.game-event{background:radial-gradient(ellipse at 80% 10%,#31235b 0,transparent 50%),radial-gradient(ellipse at 5% 75%,#15394a 0,transparent 55%),#0c1021;color:#f3efff}
+.game-event .rsvp-space{opacity:.58;background-image:radial-gradient(#d1ecff 1px,transparent 1.5px),radial-gradient(#b99dff 1.5px,transparent 2px);background-size:71px 97px,173px 191px;background-position:0 0,39px 53px}
+.game-event .pixel-flight{width:145px;color:#a5a8ff;animation-duration:24s;animation-delay:calc(var(--i)*-4.5s)}
+.game-event .pixel-flight:nth-child(even){color:#72dfde;width:115px}
+.game-event .pixel-flight svg{filter:drop-shadow(0 0 10px #8f8fff99);shape-rendering:crispEdges}
+.game-event .pixel-flight:before{content:'';position:absolute;right:94%;top:43%;width:50px;height:8px;background:linear-gradient(90deg,transparent,#9c75ff,#d7faff);box-shadow:0 0 16px #65cfff88}
+.game-event .pixel-flight span{height:4px;width:32px;background:#adffff;box-shadow:55px 0 #e2d0ff,0 0 12px #78edff;animation-duration:2.8s}
+.game-event .event-panel,.game-event .event-form fieldset{background:#151a30f7;border:1px solid #726497;border-radius:12px;box-shadow:0 8px 0 #080d1b66,0 18px 45px #0003;backdrop-filter:none}
+.game-event .event-form legend{color:#beafff;font-family:'Space Grotesk',sans-serif;font-weight:700}
+.game-event .event-form input:not([type=checkbox]),.game-event .event-form select,.game-event .event-form textarea{background:#0e1427;color:#f5f1ff;border-color:#635c84}
+.game-event .event-form input:focus,.game-event .event-form select:focus,.game-event .event-form textarea:focus{outline:2px solid #80dedc;outline-offset:3px}
+.game-event #event-registration .required-mark{color:#ffbdcd}
+.game-event #event-registration .team-progress{background:#222a44;color:#e7e5ff;border-color:#6b6798}
+.game-event .team-progress strong{color:#a8eeeb}.game-event .team-progress progress{accent-color:#8adbd8}
+.game-event #event-registration .add-teammate{color:#b6eeed;border-color:#7d9eaf}
+.game-event .event-button,.game-event button[type=submit]{background:#b9b0f6;border-color:#ddd5ff;color:#17132e;box-shadow:0 4px 0 #665486}
+.game-event .event-hero:before{content:'✦  PLAY / BUILD / MAKE A DIFFERENCE';font:700 12px 'Space Grotesk',sans-serif;letter-spacing:2px;color:#a8e4e6}
+.game-event .event-hero{background:linear-gradient(120deg,#151a30e8,#312552a6);padding:30px;border-radius:16px}
+.game-event .form-note{color:#c7c2e2}
+.game-event .space-motion-toggle{position:fixed;bottom:14px;right:14px;z-index:5;background:#151a30;color:#d4d5f6;border:1px solid #7d79a8;border-radius:8px;font-size:12px;padding:12px;min-height:44px;box-shadow:0 4px 20px #0005}
+.space-paused .pixel-flight,.space-paused .pixel-flight span{animation-play-state:paused}
+@media(max-width:600px){.game-event .pixel-flight{width:95px}.game-event .pixel-flight:nth-child(even){width:75px}.game-event .rsvp-space{opacity:.48}.game-event .event-hero{padding:22px 18px}.game-event main{padding-bottom:100px}}
+@media(prefers-reduced-motion:reduce){.game-event .pixel-flight{animation:none}.game-event .pixel-flight span,.game-event .space-motion-toggle{display:none}.game-event .pixel-flight:before{width:20px}}

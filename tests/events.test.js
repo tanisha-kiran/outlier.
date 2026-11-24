@@ -3,6 +3,23 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
 import { splitEvents, registrationState, submissionOpen, googleFormUrl, submissionFormState, fromIstInput, toIstInput, httpsUrl, escapeHtml } from '../src/event-model.js';
+import { participantEmail } from '../supabase/functions/participant-email/email-content.js';
+
+test('participant confirmation sends the team code only to the team leader',()=>{
+ const job={kind:'confirmation',registration_id:'registration-1',recipient:'student@example.test',payload:{
+  name:'Student',title:'Build Together',slug:'build-together',starts_at:'2026-12-01T10:00:00Z',location:'Bengaluru',mode:'offline',
+  participation:'team',team:'Orbit team',reference:'PFP-AI001',invite_code:'team-code-123',leader:true
+ }};
+ const leaderEmail=participantEmail(job,'https://outlier.example.test');
+ assert.match(leaderEmail.text,/You are in\. Your registration is confirmed\./);
+ assert.match(leaderEmail.text,/Team code: team-code-123/);
+ assert.match(leaderEmail.subject,/Your registration is confirmed: Build Together/);
+ assert.doesNotMatch(leaderEmail.text,/✳|↗/);
+ const memberEmail=participantEmail({...job,payload:{...job.payload,leader:false}},'https://outlier.example.test');
+ assert.doesNotMatch(memberEmail.text,/team-code-123/);
+ assert.doesNotMatch(memberEmail.html,/team-code-123/);
+ assert.doesNotMatch(memberEmail.text,/✳|↗/);
+});
 
 test('multi-college registration preserves school identity and isolates student records', async () => {
  const db = new PGlite();
@@ -134,11 +151,23 @@ test('real PostgreSQL migration, RLS and registration/submission lifecycle',asyn
  await db.exec('reset role');await db.exec(await readFile(new URL('../supabase/006_registration_references.sql',import.meta.url),'utf8'));
  const references=(await db.query('select reference_code from public.event_registrations order by reference_code')).rows;assert.equal(references.length,2);assert.match(references[0].reference_code,/^PFP-AI[0-9]{3,}$/);
  await db.exec(await readFile(new URL('../supabase/007_reference_format.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../supabase/008_participant_emails.sql',import.meta.url),'utf8'));
  assert.equal((await db.query("select 'PFP-AI'||lpad(n::text,greatest(3,length(n::text)),'0') as code from (values (1),(999),(1000)) v(n)")).rows.map(r=>r.code).join(','),'PFP-AI001,PFP-AI999,PFP-AI1000');
  await as('authenticated',ids[0]);await db.query("update public.events set deadline=now()+interval '1 hour' where id=$1",[eid]);
  await as('authenticated',ids[3]);const newReg=(await db.query("select public.register_for_event($1,'team','Another team','','9876543210',$2,true,false,$3) as id",[eid,JSON.stringify({purpose:'Build',github:'https://github.com/student',linkedin:'https://linkedin.com/in/student',motivation:'I want to build games.'}),JSON.stringify([{name:'Friend Name',email:'friend@example.test'}])])).rows[0].id;
  assert.equal((await db.query('select reference_code from public.event_registrations where id=$1',[newReg])).rows[0].reference_code,'PFP-AI003');
  assert.equal((await db.query('select * from public.event_invited_members')).rows.length,1);
  await as('authenticated',ids[1]);assert.equal((await db.query('select * from public.event_invited_members')).rows.length,0);
+ assert.equal((await db.query('select * from public.event_email_outbox')).rows.length,0);
+ await db.exec('reset role');
+ const queued=(await db.query('select kind,recipient,payload from public.event_email_outbox order by kind')).rows;
+ assert.deepEqual(queued.map(row=>row.kind),['admin','confirmation','invitation']);
+ assert.equal(queued[2].recipient,'friend@example.test');
+ assert.equal(queued[1].payload.confirmed,1);
+ assert.equal(queued[1].payload.reference,'PFP-AI003');
+ assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,3);
+ assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,0);
+ await db.exec("update public.event_email_outbox set available_at=now()-interval '1 minute',first_attempt_at=now()-interval '24 hours'");
+ assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,0);
  } finally {await db.close();}
 });

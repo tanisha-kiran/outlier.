@@ -1,5 +1,19 @@
 # RSVP notifications
 
+## Participant confirmations and invitations (new setup)
+
+This supersedes the organizer-only worker below. It is not live until deployed.
+
+1. Apply `supabase/008_participant_emails.sql` after all existing migrations, including both 005 files, 006 and 007. It queues new participant confirmations, organizer updates and teammate invitations. The confirmation includes a team code only for the team leader; teammates receive their own confirmation after they register. Existing RSVPs are not backfilled.
+2. Verify a domain you own in Resend. A `workers.dev` website address does not give you ownership of that domain for sending email. Set `RSVP_FROM_EMAIL` to `OUTLIER Community <events@YOUR-VERIFIED-DOMAIN>` in Supabase secrets, along with `RESEND_API_KEY` and `RSVP_CRON_SECRET`. Set `OUTLIER_SITE_URL` to `https://outlier.acs-community.workers.dev`. Never put these secrets into frontend variables. Replies go to `outlier.community.acs@gmail.com`.
+3. Deploy `supabase functions deploy participant-email --no-verify-jwt`. The worker verifies `x-rsvp-cron-secret` itself. Replace the old cron target with `/functions/v1/participant-email` and use this header from Vault. Disable the old `rsvp-email` schedule to avoid duplicate organizer messages.
+4. Test with a consenting team leader and teammate: leader RSVP → leader confirmation with the team code + organizer alert + teammate invitation; teammate joins → their confirmation without the leader's code + new organizer alert. Verify the inboxes and the dashboard's Registration emails list. Invitations do not confirm a place. One private email is sent to each recipient; students never receive a public mailing list.
+5. The queue claims 10 jobs at a time with a five-minute lock, uses a stable Resend idempotency key per message and retries independently. Automated retries stop 23 hours after the first attempt to stay inside Resend's 24-hour idempotency window. Review provider logs before manually retrying old jobs. `sent_at` means accepted by Resend, not proven inbox delivery. Check bounces in Resend; no delivery webhook is configured yet. Ensure provider quotas cover confirmations, invitations and organizer alerts.
+
+The displayed sender is OUTLIER Community. Gmail is the organizer inbox and reply destination; this implementation sends through Resend, not through Gmail's sending API.
+
+## Earlier organizer-only setup
+
 The website uses existing authenticated student emails; each teammate supplies their own GitHub, LinkedIn and motivation. Organizer activity and counts refresh every 30 seconds while `/events/admin` is open. Email is not active until the following setup is completed.
 
 1. Run `supabase/005_rsvp_notifications.sql` in the project's SQL editor after migrations 001–004. It adds required event questions, server validation and a private email queue. Existing RSVPs are not revalidated or emailed retroactively.

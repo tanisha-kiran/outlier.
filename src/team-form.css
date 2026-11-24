@@ -1,0 +1,9 @@
+#event-registration [hidden]{display:none!important}
+#event-registration .required-mark{color:#a32f50;font-weight:700}
+#event-registration [data-team]{position:relative;padding-right:220px}
+#event-registration .team-progress{position:absolute;right:0;top:0;width:195px;background:#f3e7e3;border:1px solid #ddc7cd;border-radius:12px;padding:18px;display:grid;gap:8px}
+.team-progress strong{font-size:36px;letter-spacing:-2px;color:#7e2949}
+.team-progress span{font-size:12px}.team-progress p{font-size:12px;line-height:1.6;margin:0}.team-progress progress{width:100%;accent-color:#963653}
+#event-registration .add-teammate{margin-top:16px;background:transparent;color:#7e2949;border:1px dashed #a36679;min-height:44px}
+#event-registration [data-teammate]{border-top:1px solid #e4d3d6;margin-top:16px;padding-top:16px}
+@media(max-width:800px){#event-registration [data-team]{padding-right:0}#event-registration .team-progress{position:static;width:100%;margin-bottom:20px}.team-progress strong{font-size:28px}}

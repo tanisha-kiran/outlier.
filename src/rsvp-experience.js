@@ -8,11 +8,18 @@ export function questionsFor(event) {
  const questions=event.registration_questions||[];
  return event.slug==='play-for-a-purpose' ? [...questions,...rsvpQuestions.filter(q=>!questions.some(existing=>existing.id===q.id))] : questions;
 }
-export function starshipBackdrop() {
+export function starshipBackdrop(event) {
+ if(event?.slug==='play-for-a-purpose')document.body.classList.add('game-event');
  if(document.querySelector('.rsvp-space'))return;
  const sky=document.createElement('div'); sky.className='rsvp-space';sky.setAttribute('aria-hidden','true');
  sky.innerHTML=Array.from({length:6},(_,i)=>`<div class="pixel-flight" style="--i:${i}"><svg viewBox="0 0 120 64"><path fill="currentColor" d="M8 24h24V12h16V4h16v16h24v8h24v8H88v8H64v16H48v-8H32V40H8z"/><path fill="#cbeaff" d="M56 24h16v16H56z"/><path fill="#ad86cf" d="M0 28h20v8H0z"/></svg><span></span></div>`).join('');
  document.body.prepend(sky);document.body.classList.add('rsvp-page');
+ if(event?.slug==='play-for-a-purpose') {
+  const toggle=document.createElement('button');toggle.type='button';toggle.className='space-motion-toggle';
+  toggle.textContent='Pause space motion';toggle.setAttribute('aria-pressed','false');
+  toggle.onclick=()=>{const paused=document.body.classList.toggle('space-paused');toggle.setAttribute('aria-pressed',String(paused));toggle.textContent=paused?'Resume space motion':'Pause space motion';};
+  document.body.append(toggle);
+ }
 }
 export function validateRsvpAnswers(answers) {
  for(const [key,host] of [['github','github.com'],['linkedin','linkedin.com']]) {
