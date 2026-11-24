@@ -8,6 +8,12 @@ Deno.serve(async request=>{
  try {
   const db=createClient(env('SUPABASE_URL'),env('SUPABASE_SERVICE_ROLE_KEY'));
   const token=request.headers.get('x-rsvp-cron-secret');
+  const supplied=request.headers.get('apikey');
+  const serverKeys=Object.values(JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS')||'{}'));
+  if(request.headers.get('x-configure-cron')==='true'&&supplied&&serverKeys.includes(supplied)){
+   const {error}=await db.rpc('configure_rsvp_cron',{token:env('RSVP_CRON_SECRET')});
+   return Response.json({configured:!error},{status:error?409:200});
+  }
   if(!token)return new Response('Unauthorized',{status:401});
   if(!secret||token!==secret){
    const {data:allowed,error}=await db.rpc('rsvp_cron_authorized',{token});
