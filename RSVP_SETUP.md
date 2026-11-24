@@ -1,5 +1,15 @@
 # RSVP notifications
 
+## Active Gmail transport
+
+The production scheduler endpoint is `rsvp-email`; its local entry imports the participant email worker. Gmail SMTP uses TLS on port 465 with `GMAIL_USER` and `GMAIL_APP_PASSWORD` stored only in Supabase secrets. Sender display name: OUTLIER Community. No Resend domain is needed for this transport.
+
+Apply migrations 008 and 009, deploy `rsvp-email` with the existing custom cron-secret authorization, and invoke it every minute using `x-rsvp-cron-secret` from Vault. `OUTLIER_SITE_URL` defaults to `https://outlier.acs-community.workers.dev`. The Gmail secrets have already been saved in the project; never commit their values.
+
+Migration 009 claims five messages per run and pauses at a conservative rolling send-attempt budget of about 350, leaving room for ordinary mailbox use. Gmail may impose additional limits. Pending first-attempt messages resume when capacity becomes available. Retries stop after 23 hours; administrators must inspect errors. SMTP has no provider idempotency guarantee: a timeout after acceptance or a database failure after sending can cause a duplicate on retry. A stable Message-ID helps identify duplicates but does not guarantee suppression. `sent_at` means Gmail accepted the message, not proof of inbox placement. The dashboard tracks queued, sent and failed messages. Existing registrations are not emailed retroactively.
+
+The instructions below document the previous Resend implementation and are not required for Gmail sending.
+
 ## Participant confirmations and invitations (new setup)
 
 This supersedes the organizer-only worker below. It is not live until deployed.
