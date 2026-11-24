@@ -5,14 +5,19 @@ const env=(name:string)=>{const value=Deno.env.get(name);if(!value)throw Error(`
 Deno.serve(async request=>{
  if(request.method!=='POST')return new Response('POST required',{status:405});
  const secret=Deno.env.get('RSVP_CRON_SECRET');
- if(!secret||request.headers.get('x-rsvp-cron-secret')!==secret)return new Response('Unauthorized',{status:401});
  try {
+  const db=createClient(env('SUPABASE_URL'),env('SUPABASE_SERVICE_ROLE_KEY'));
+  const token=request.headers.get('x-rsvp-cron-secret');
+  if(!token)return new Response('Unauthorized',{status:401});
+  if(!secret||token!==secret){
+   const {data:allowed,error}=await db.rpc('rsvp_cron_authorized',{token});
+   if(error||allowed!==true)return new Response('Unauthorized',{status:401});
+  }
   const base=new URL(Deno.env.get('OUTLIER_SITE_URL')||'https://outlier.acs-community.workers.dev');if(base.protocol!=='https:')throw Error('Use the public HTTPS website URL');
   const gmailUser=env('GMAIL_USER');
   const transport=nodemailer.createTransport({host:'smtp.gmail.com',port:465,secure:true,
    auth:{user:gmailUser,pass:env('GMAIL_APP_PASSWORD').replace(/\s/g,'')},
    connectionTimeout:5000,greetingTimeout:5000,socketTimeout:8000});
-  const db=createClient(env('SUPABASE_URL'),env('SUPABASE_SERVICE_ROLE_KEY'));
   const {data:jobs,error}=await db.rpc('claim_event_emails');if(error)throw error;
   let sent=0,failed=0;
   for(const job of jobs||[]) {
