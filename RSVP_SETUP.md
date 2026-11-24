@@ -6,6 +6,8 @@ The production scheduler endpoint is `rsvp-email`; its local entry imports the p
 
 Apply migrations 008 and 009, deploy `rsvp-email` with the existing custom cron-secret authorization, and invoke it every minute using `x-rsvp-cron-secret` from Vault. `OUTLIER_SITE_URL` defaults to `https://outlier.acs-community.workers.dev`. The Gmail secrets have already been saved in the project; never commit their values.
 
+Migrations 010 and 011 support verifying the scheduler's Vault credential and configuring it once from the existing Edge Function secret. The bootstrap request requires a valid Supabase server secret in `apikey` and `x-configure-cron: true`; it refuses to overwrite a saved credential. These migrations and the bootstrap have been applied in production. The existing `outlier-rsvp-email` cron job posts every minute to `rsvp-email` with the Vault credential in `x-rsvp-cron-secret`.
+
 Migration 009 claims five messages per run and pauses at a conservative rolling send-attempt budget of about 350, leaving room for ordinary mailbox use. Gmail may impose additional limits. Pending first-attempt messages resume when capacity becomes available. Retries stop after 23 hours; administrators must inspect errors. SMTP has no provider idempotency guarantee: a timeout after acceptance or a database failure after sending can cause a duplicate on retry. A stable Message-ID helps identify duplicates but does not guarantee suppression. `sent_at` means Gmail accepted the message, not proof of inbox placement. The dashboard tracks queued, sent and failed messages. Existing registrations are not emailed retroactively.
 
 The instructions below document the previous Resend implementation and are not required for Gmail sending.
