@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { participantEmail } from './email-content.js';
+import { deliveryFailure } from './delivery-failure.js';
 import nodemailer from 'npm:nodemailer@7';
 const env=(name:string)=>{const value=Deno.env.get(name);if(!value)throw Error(`Missing ${name}`);return value;};
 Deno.serve(async request=>{
@@ -19,7 +20,6 @@ Deno.serve(async request=>{
    const {data:allowed,error}=await db.rpc('rsvp_cron_authorized',{token});
    if(error||allowed!==true)return new Response('Unauthorized',{status:401});
   }
-  const base=new URL(Deno.env.get('OUTLIER_SITE_URL')||'https://outlier.acs-community.workers.dev');if(base.protocol!=='https:')throw Error('Use the public HTTPS website URL');
   const gmailUser=env('GMAIL_USER');
   const transport=nodemailer.createTransport({host:'smtp.gmail.com',port:465,secure:true,
    auth:{user:gmailUser,pass:env('GMAIL_APP_PASSWORD').replace(/\s/g,'')},
@@ -27,16 +27,23 @@ Deno.serve(async request=>{
   const {data:jobs,error}=await db.rpc('claim_event_emails');if(error)throw error;
   let sent=0,failed=0;
   for(const job of jobs||[]) {
+   let accepted=false;
    try {
-    const email=participantEmail(job,base.origin);
+    const email=participantEmail(job,gmailUser);
     const receipt=await transport.sendMail({from:{name:'OUTLIER Community',address:gmailUser},to:email.recipient,
      replyTo:gmailUser,subject:email.subject,text:email.text});
     if(!receipt.accepted?.length)throw Error('Gmail did not accept the recipient');
+    accepted=true;
     const {error:save}=await db.from('event_email_outbox').update({sent_at:new Date().toISOString(),provider_id:receipt.messageId,last_error:null}).eq('id',job.id);if(save)throw save;
     sent++;
    } catch(error) {
     failed++;
-    await db.from('event_email_outbox').update({last_error:error instanceof Error?error.message:'Delivery failed'}).eq('id',job.id);
+    const failure=deliveryFailure(error,accepted);
+    // Stop the batch on transport rejection instead of repeating it to students.
+    await db.from('email_delivery_settings').update({enabled:false,reason:failure.reason}).eq('id',true);
+    await db.from('event_email_outbox').update({last_error:failure.reason,
+     ...(failure.bounce?{bounced_at:new Date().toISOString(),bounce_reason:failure.reason}:{})}).eq('id',job.id);
+    break;
    }
    await new Promise(resolve=>setTimeout(resolve,600));
   }

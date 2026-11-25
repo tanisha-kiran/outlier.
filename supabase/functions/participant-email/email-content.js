@@ -1,4 +1,4 @@
-export function participantEmail(job) {
+export function participantEmail(job, organizerInbox) {
  const p=job.payload;
  const invitation=job.kind==='invitation',admin=job.kind==='admin';
  const leader=!invitation&&!admin&&p.participation==='team'&&p.leader===true&&p.invite_code;
@@ -7,8 +7,8 @@ export function participantEmail(job) {
  if(invitation||leader)details.push(['Team code',p.invite_code]);
  if(admin)details.push(['Participant',p.name],['Total event participants',p.total]);
  const heading=admin?'New participant registration':invitation?'Team invitation':'Registration confirmation';
- const intro=admin?`${p.name} registered for this event.`:invitation?'Your teammate invited you. To confirm your place, open the OUTLIER website you registered with, sign in, and join using the team code below.':`Your registration has been saved.${p.participation==='team'?' Each teammate must complete their own registration.':''}`;
- return {recipient:admin?'outlier.community.acs@gmail.com':job.recipient,
+ const intro=admin?`${p.name} registered for this event.`:invitation?'Your team leader asked OUTLIER to send you this one-time invitation. To RSVP, sign in on the OUTLIER website, choose Join a team, and enter the team code below.':`Your registration has been saved.${p.participation==='team'?' Each teammate must complete their own registration.':''}`;
+ return {recipient:admin?organizerInbox:job.recipient,
  subject:`${heading}: ${p.title}`.replace(/[\r\n]/g,' '),
  text:[`Hello ${admin?'OUTLIER team':p.name},`,intro,...details.map(([key,value])=>`${key}: ${value}`),'You can check the current registration status on the OUTLIER website.','If you did not expect this message, please reply and let us know.','OUTLIER Community'].join('\n\n')};
 }

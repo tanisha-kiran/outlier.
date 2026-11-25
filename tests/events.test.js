@@ -5,20 +5,32 @@ import { PGlite } from '@electric-sql/pglite';
 import { splitEvents, registrationState, submissionOpen, googleFormUrl, submissionFormState, fromIstInput, toIstInput, httpsUrl, escapeHtml } from '../src/event-model.js';
 import { participantEmail } from '../supabase/functions/participant-email/email-content.js';
 import { emailDeliveryStatus } from '../src/email-delivery-status.js';
+import { deliveryFailure } from '../supabase/functions/participant-email/delivery-failure.js';
+
+test('SMTP refusal pauses sending without treating uncertain delivery as a confirmed bounce',()=>{
+ assert.equal(deliveryFailure({responseCode:550,command:'DATA'}).bounce,true);
+ assert.equal(deliveryFailure({responseCode:535,command:'AUTH PLAIN'}).bounce,false);
+ assert.equal(deliveryFailure({responseCode:421}).bounce,false);
+ assert.equal(deliveryFailure(Error('database failed'),true).bounce,false);
+ assert.match(deliveryFailure(Error('database failed'),true).reason,/accepted/);
+});
 
 test('participant confirmation sends the team code only to the team leader',()=>{
  const job={kind:'confirmation',registration_id:'registration-1',recipient:'student@example.test',payload:{
   name:'Student',title:'Build Together',slug:'build-together',starts_at:'2026-12-01T10:00:00Z',location:'Bengaluru',mode:'offline',
   participation:'team',team:'Orbit team',reference:'PFP-AI001',invite_code:'team-code-123',leader:true
  }};
- const leaderEmail=participantEmail(job,'https://outlier.example.test');
+ const leaderEmail=participantEmail(job,'organizer@example.test');
  assert.match(leaderEmail.text,/Your registration has been saved/);
  assert.match(leaderEmail.text,/Team code: team-code-123/);
  assert.match(leaderEmail.subject,/Registration confirmation: Build Together/);
  assert.doesNotMatch(leaderEmail.text,/✳|↗/);
- const memberEmail=participantEmail({...job,payload:{...job.payload,leader:false}},'https://outlier.example.test');
+ const memberEmail=participantEmail({...job,payload:{...job.payload,leader:false}},'organizer@example.test');
  assert.doesNotMatch(memberEmail.text,/team-code-123/);
  assert.equal(memberEmail.html,undefined);
+ assert.equal(memberEmail.recipient,'student@example.test');
+ const adminEmail=participantEmail({...job,kind:'admin'},'organizer@example.test');
+ assert.equal(adminEmail.recipient,'organizer@example.test');
  assert.doesNotMatch(memberEmail.text,/https?:\/\//);
  assert.doesNotMatch(memberEmail.text,/✳|↗/);
 });
@@ -183,6 +195,17 @@ test('real PostgreSQL migration, RLS and registration/submission lifecycle',asyn
  assert.equal(resumed.length,2);
  assert.ok(resumed.every(row=>row.kind!=='confirmation'));
  await db.exec("update public.event_email_outbox set available_at=now()-interval '1 minute',first_attempt_at=now()-interval '24 hours'");
+ assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,0);
+
+ await db.exec(await readFile(new URL('../supabase/013_fresh_rsvp_delivery.sql',import.meta.url),'utf8'));
+ await db.exec("update public.event_email_outbox set first_attempt_at=null; update public.email_delivery_settings set send_from=now()");
+ assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,0);
+ await db.exec("update public.email_delivery_settings set send_from=now()-interval '1 minute'");
+ const fresh=(await db.query('select kind from public.claim_event_emails()')).rows;
+ assert.deepEqual(fresh,[{kind:'admin'}]);
+ assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,0);
+ await db.query("update public.event_participants set answers=answers||jsonb_build_object('outlier_team_email_requested',true) where registration_id=$1 and user_id=$2",[newReg,ids[3]]);
+ assert.deepEqual((await db.query('select kind from public.claim_event_emails()')).rows,[{kind:'invitation'}]);
  assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,0);
  } finally {await db.close();}
 });
