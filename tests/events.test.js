@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
 import { splitEvents, registrationState, submissionOpen, googleFormUrl, submissionFormState, fromIstInput, toIstInput, httpsUrl, escapeHtml } from '../src/event-model.js';
 import { participantEmail } from '../supabase/functions/participant-email/email-content.js';
+import { emailDeliveryStatus } from '../src/email-delivery-status.js';
 
 test('participant confirmation sends the team code only to the team leader',()=>{
  const job={kind:'confirmation',registration_id:'registration-1',recipient:'student@example.test',payload:{
@@ -11,14 +12,21 @@ test('participant confirmation sends the team code only to the team leader',()=>
   participation:'team',team:'Orbit team',reference:'PFP-AI001',invite_code:'team-code-123',leader:true
  }};
  const leaderEmail=participantEmail(job,'https://outlier.example.test');
- assert.match(leaderEmail.text,/You are in\. Your registration is confirmed\./);
+ assert.match(leaderEmail.text,/Your registration has been saved/);
  assert.match(leaderEmail.text,/Team code: team-code-123/);
- assert.match(leaderEmail.subject,/Your registration is confirmed: Build Together/);
+ assert.match(leaderEmail.subject,/Registration confirmation: Build Together/);
  assert.doesNotMatch(leaderEmail.text,/✳|↗/);
  const memberEmail=participantEmail({...job,payload:{...job.payload,leader:false}},'https://outlier.example.test');
  assert.doesNotMatch(memberEmail.text,/team-code-123/);
- assert.doesNotMatch(memberEmail.html,/team-code-123/);
+ assert.equal(memberEmail.html,undefined);
+ assert.doesNotMatch(memberEmail.text,/https?:\/\//);
  assert.doesNotMatch(memberEmail.text,/✳|↗/);
+});
+
+test('delivery status distinguishes Gmail acceptance, bounces and the sending pause',()=>{
+ assert.equal(emailDeliveryStatus({sent_at:'2026-11-25',bounced_at:'2026-11-25'}),'Bounced — not delivered');
+ assert.equal(emailDeliveryStatus({sent_at:'2026-11-25'},true),'Accepted by Gmail — delivery unverified');
+ assert.equal(emailDeliveryStatus({},true),'On hold — sending paused');
 });
 
 test('multi-college registration preserves school identity and isolates student records', async () => {
@@ -167,6 +175,13 @@ test('real PostgreSQL migration, RLS and registration/submission lifecycle',asyn
  assert.equal(queued[1].payload.reference,'PFP-AI003');
  assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,3);
  assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,0);
+ await db.exec(await readFile(new URL('../supabase/012_email_delivery_pause.sql',import.meta.url),'utf8'));
+ await db.exec("update public.event_email_outbox set available_at=now()-interval '1 minute',first_attempt_at=null");
+ assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,0);
+ await db.exec("update public.event_email_outbox set bounced_at=now() where kind='confirmation'; update public.email_delivery_settings set enabled=true");
+ const resumed=(await db.query('select * from public.claim_event_emails()')).rows;
+ assert.equal(resumed.length,2);
+ assert.ok(resumed.every(row=>row.kind!=='confirmation'));
  await db.exec("update public.event_email_outbox set available_at=now()-interval '1 minute',first_attempt_at=now()-interval '24 hours'");
  assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,0);
  } finally {await db.close();}

@@ -1,5 +1,11 @@
 # RSVP notifications
 
+## Delivery incident — 25 November 2026
+
+Automatic sending is paused after Gmail rejected both an organizer alert and a participant confirmation as suspicious. Migration 012 adds the pause setting and manual bounce records; the `outlier-rsvp-email` cron job has also been disabled. New registrations still queue their messages. Previously accepted emails are not assumed delivered and are not automatically resent. One participant bounce supplied by the organizer has been recorded in production, scoped to its recipient and registration reference.
+
+Revised messages use plain text with no website links or HTML. This is a controlled deliverability experiment, not a guarantee of inbox delivery. The dashboard distinguishes Gmail acceptance from known bounces and shows the pause. Gmail bounce monitoring is still manual. Before resuming, confirm an independent test reaches the recipient inbox and is not followed by a bounce. Then review stale queued messages and provider limits, enable `email_delivery_settings.enabled` and re-enable the cron job deliberately. Do not clear `sent_at` to retry accepted messages without reviewing delivery evidence. Keep bounced messages excluded.
+
 ## Active Gmail transport
 
 The production scheduler endpoint is `rsvp-email`; its local entry imports the participant email worker. Gmail SMTP uses TLS on port 465 with `GMAIL_USER` and `GMAIL_APP_PASSWORD` stored only in Supabase secrets. Sender display name: OUTLIER Community. No Resend domain is needed for this transport.

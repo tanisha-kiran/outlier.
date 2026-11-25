@@ -30,7 +30,7 @@ Deno.serve(async request=>{
    try {
     const email=participantEmail(job,base.origin);
     const receipt=await transport.sendMail({from:{name:'OUTLIER Community',address:gmailUser},to:email.recipient,
-     replyTo:gmailUser,messageId:`<outlier-${job.id}@gmail.com>`,subject:email.subject,text:email.text,html:email.html});
+     replyTo:gmailUser,subject:email.subject,text:email.text});
     if(!receipt.accepted?.length)throw Error('Gmail did not accept the recipient');
     const {error:save}=await db.from('event_email_outbox').update({sent_at:new Date().toISOString(),provider_id:receipt.messageId,last_error:null}).eq('id',job.id);if(save)throw save;
     sent++;
