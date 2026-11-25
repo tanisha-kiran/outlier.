@@ -1,7 +1,9 @@
-export function emailDeliveryStatus(mail, paused=false, now=Date.now()) {
+export function emailDeliveryStatus(mail, paused=false, sendFrom=null) {
  if(mail.bounced_at)return 'Bounced — not delivered';
  if(mail.sent_at)return 'Accepted by Gmail — delivery unverified';
+ if(sendFrom&&Date.parse(mail.created_at)<Date.parse(sendFrom))return 'Held from earlier queue';
+ if(mail.last_error)return 'Needs organizer review';
  if(paused)return 'On hold — sending paused';
- if(mail.first_attempt_at&&now-Date.parse(mail.first_attempt_at)>23*60*60*1000)return 'Needs organizer review';
- return mail.last_error?'Retry pending':'Queued';
+ if(mail.first_attempt_at)return 'Attempted — delivery unverified';
+ return 'Queued';
 }

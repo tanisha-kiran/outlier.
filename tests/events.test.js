@@ -39,6 +39,8 @@ test('delivery status distinguishes Gmail acceptance, bounces and the sending pa
  assert.equal(emailDeliveryStatus({sent_at:'2026-11-25',bounced_at:'2026-11-25'}),'Bounced — not delivered');
  assert.equal(emailDeliveryStatus({sent_at:'2026-11-25'},true),'Accepted by Gmail — delivery unverified');
  assert.equal(emailDeliveryStatus({},true),'On hold — sending paused');
+ assert.equal(emailDeliveryStatus({created_at:'2026-11-25'},false,'2026-11-26'),'Held from earlier queue');
+ assert.equal(emailDeliveryStatus({last_error:'SMTP failure'}),'Needs organizer review');
 });
 
 test('multi-college registration preserves school identity and isolates student records', async () => {
