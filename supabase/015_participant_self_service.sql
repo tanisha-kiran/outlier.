@@ -157,7 +157,7 @@ begin
   insert into public.event_cancellations(event_id, registration_id, reference_code, team_name, participant_name, participant_email)
   values (eid, reg.id, reg.reference_code, coalesce(reg.team_name, ''), membership.full_name, contact_mail);
 
-  delete from public.event_participants where id = membership.id;
+  delete from public.event_participants where event_id = eid and user_id = auth.uid();
 
   select user_id into next_owner
   from public.event_participants
@@ -177,7 +177,7 @@ begin
   values (
     case when next_owner is null then null else reg.id end,
     'admin',
-    'cancel:' || membership.id::text,
+    'cancel:' || auth.uid()::text || ':' || extract(epoch from now())::bigint::text,
     jsonb_build_object(
       'cancelled', true,
       'name', membership.full_name,
