@@ -113,18 +113,49 @@ end $$;
 revoke all on function public.update_registration_members(uuid, text, text, jsonb) from public, anon;
 grant execute on function public.update_registration_members(uuid, text, text, jsonb) to authenticated;
 
+create table if not exists public.event_cancellations (
+  id uuid primary key default gen_random_uuid(),
+  event_id uuid not null references public.events on delete cascade,
+  registration_id uuid,
+  reference_code text,
+  team_name text not null default '',
+  participant_name text not null,
+  participant_email text not null,
+  cancelled_at timestamptz not null default now()
+);
+alter table public.event_cancellations enable row level security;
+revoke all on public.event_cancellations from anon, authenticated;
+grant select on public.event_cancellations to authenticated;
+drop policy if exists cancellations_admin_read on public.event_cancellations;
+create policy cancellations_admin_read on public.event_cancellations for select to authenticated using (public.is_admin());
+
+-- Preserve organizer cancellation emails even if the last member deletes the registration.
+alter table public.event_email_outbox alter column registration_id drop not null;
+alter table public.event_email_outbox drop constraint if exists event_email_outbox_registration_id_fkey;
+alter table public.event_email_outbox add constraint event_email_outbox_registration_id_fkey
+  foreign key (registration_id) references public.event_registrations(id) on delete set null;
+
 create or replace function public.cancel_event_registration(eid uuid)
 returns void
 language plpgsql security definer set search_path='' as $$
 declare
   membership public.event_participants;
   reg public.event_registrations;
+  e public.events;
   next_owner uuid;
+  remaining_total integer;
+  contact_mail text;
 begin
   if auth.uid() is null then raise exception 'Sign in to cancel your registration'; end if;
   select * into membership from public.event_participants where event_id = eid and user_id = auth.uid() for update;
   if not found then raise exception 'You are not registered for this event'; end if;
   select * into reg from public.event_registrations where id = membership.registration_id for update;
+  select * into e from public.events where id = eid;
+
+  contact_mail := lower(trim(coalesce(nullif(membership.answers->>'contact_email', ''), membership.email)));
+
+  insert into public.event_cancellations(event_id, registration_id, reference_code, team_name, participant_name, participant_email)
+  values (eid, reg.id, reg.reference_code, coalesce(reg.team_name, ''), membership.full_name, contact_mail);
 
   delete from public.event_participants where id = membership.id;
 
@@ -139,6 +170,29 @@ begin
   elsif reg.owner_id = auth.uid() then
     update public.event_registrations set owner_id = next_owner where id = reg.id;
   end if;
+
+  select count(*) into remaining_total from public.event_participants where event_id = eid;
+
+  insert into public.event_email_outbox(registration_id, kind, recipient, payload)
+  values (
+    case when next_owner is null then null else reg.id end,
+    'admin',
+    'cancel:' || membership.id::text,
+    jsonb_build_object(
+      'cancelled', true,
+      'name', membership.full_name,
+      'email', contact_mail,
+      'title', e.title,
+      'slug', e.slug,
+      'starts_at', e.starts_at,
+      'location', e.location,
+      'mode', e.mode,
+      'team', reg.team_name,
+      'reference', reg.reference_code,
+      'total', remaining_total,
+      'participation', reg.participation
+    )
+  ) on conflict do nothing;
 end $$;
 revoke all on function public.cancel_event_registration(uuid) from public, anon;
 grant execute on function public.cancel_event_registration(uuid) to authenticated;

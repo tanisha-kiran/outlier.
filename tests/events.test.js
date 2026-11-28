@@ -235,5 +235,9 @@ test('real PostgreSQL migration, RLS and registration/submission lifecycle',asyn
  assert.deepEqual(editedInvited,[{name:'Edited Friend',email:'edited.friend@example.test'}]);
  await db.query('select public.cancel_event_registration($1)',[eid]);
  assert.equal((await db.query('select * from public.event_participants where event_id=$1',[eid])).rows.length,0);
+ await as('authenticated',ids[0]);
+ assert.equal((await db.query('select * from public.event_cancellations where event_id=$1',[eid])).rows.length,1);
+ await db.exec('reset role');
+ assert.equal((await db.query("select * from public.event_email_outbox where kind='admin' and (payload->>'cancelled')::boolean is true")).rows.length,1);
  } finally {await db.close();}
 });
