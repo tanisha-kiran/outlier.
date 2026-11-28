@@ -193,6 +193,26 @@ begin
       'participation', reg.participation
     )
   ) on conflict do nothing;
+
+  insert into public.event_email_outbox(registration_id, kind, recipient, payload)
+  values (
+    null,
+    'confirmation',
+    contact_mail,
+    jsonb_build_object(
+      'cancelled', true,
+      'name', membership.full_name,
+      'email', contact_mail,
+      'title', e.title,
+      'slug', e.slug,
+      'starts_at', e.starts_at,
+      'location', e.location,
+      'mode', e.mode,
+      'team', reg.team_name,
+      'reference', reg.reference_code,
+      'participation', reg.participation
+    )
+  );
 end $$;
 revoke all on function public.cancel_event_registration(uuid) from public, anon;
 grant execute on function public.cancel_event_registration(uuid) to authenticated;
