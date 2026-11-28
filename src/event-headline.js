@@ -1,5 +1,5 @@
 import { client } from './onboarding.js';
-import { escapeHtml, registrationState, httpsUrl } from './event-model.js';
+import { escapeHtml, registrationState, httpsUrl, isSoldOut } from './event-model.js';
 import './event-headline.css';
 
 export function startEventHeadline() {
@@ -38,10 +38,11 @@ export function startEventHeadline() {
       if (error) throw error;
       const date = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
       render(data?.length ? data.map(event => {
-        const open = registrationState(event) === 'Register';
+        const soldOut = isSoldOut(event);
+        const open = !soldOut && registrationState(event) === 'Register';
         const team = event.participation !== 'solo';
         const native = event.registration_mode === 'native';
-        return {text: `${event.title} · ${date.format(new Date(event.starts_at))}`,
+        return {text: `${event.title} · ${date.format(new Date(event.starts_at))}${soldOut ? ' · SOLD OUT' : ''}`,
           href: open ? (native ? `/events/${encodeURIComponent(event.slug)}/register${team ? '?participation=team' : ''}` : httpsUrl(event.apply_url) || `/events/${encodeURIComponent(event.slug)}`) : `/events/${encodeURIComponent(event.slug)}`,
           label: open ? (native && team ? 'RSVP your team' : 'RSVP now') : registrationState(event)};
       })

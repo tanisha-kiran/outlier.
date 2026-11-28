@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
-import { splitEvents, registrationState, submissionOpen, googleFormUrl, submissionFormState, fromIstInput, toIstInput, httpsUrl, escapeHtml } from '../src/event-model.js';
+import { splitEvents, registrationState, isSoldOut, soldOutMessage, submissionOpen, googleFormUrl, submissionFormState, fromIstInput, toIstInput, httpsUrl, escapeHtml } from '../src/event-model.js';
 import { participantEmail } from '../supabase/functions/participant-email/email-content.js';
 import { emailDeliveryStatus } from '../src/email-delivery-status.js';
 import { deliveryFailure } from '../supabase/functions/participant-email/delivery-failure.js';
@@ -80,6 +80,10 @@ test('event sorting, privacy filtering, deadlines and IST conversions',()=>{
  const base={is_community:true,status:'published',starts_at:'2026-11-22T10:00:00Z',registration_mode:'native',deadline:'2026-11-21T10:00:00Z'};
  assert.equal(registrationState(base,now),'Registration Closed');
  assert.equal(registrationState({...base,deadline:'2026-11-21T10:00:01Z'},now),'Register');
+ assert.equal(isSoldOut({...base,slug:'play-for-a-purpose',deadline:'2026-11-21T10:00:01Z'},now),true);
+ assert.equal(registrationState({...base,slug:'play-for-a-purpose',deadline:'2026-11-21T10:00:01Z'},now),'Sold out');
+ assert.match(soldOutMessage({title:'Play for a Purpose'}).heading,/That’s a wrap for this one!/);
+ assert.match(soldOutMessage({title:'Play for a Purpose'}).body,/Play for a Purpose is officially sold out/);
  assert.equal(registrationState({...base,registration_mode:'announced',deadline:null},now),'Registration opens soon');
  assert.equal(registrationState({...base,starts_at:'2026-11-20T10:00:00Z'},now),'Event Completed');
  assert.equal(submissionOpen({submission_opens_at:'2026-11-20T10:00:00Z',submission_deadline:'2026-11-21T10:00:00Z'},now),false);
@@ -209,5 +213,27 @@ test('real PostgreSQL migration, RLS and registration/submission lifecycle',asyn
  await db.query("update public.event_participants set answers=answers||jsonb_build_object('outlier_team_email_requested',true) where registration_id=$1 and user_id=$2",[newReg,ids[3]]);
  assert.deepEqual((await db.query('select kind from public.claim_event_emails()')).rows,[{kind:'invitation'}]);
  assert.equal((await db.query('select * from public.claim_event_emails()')).rows.length,0);
+
+ await db.exec(await readFile(new URL('../supabase/014_play_for_a_purpose_sold_out.sql',import.meta.url),'utf8'));
+ assert.equal((await db.query("select registration_mode from public.events where slug='play-for-a-purpose'")).rows[0].registration_mode,'closed');
+ assert.equal((await db.query('select count(*)::int as n from public.event_participants where event_id=$1',[eid])).rows[0].n,3);
+ assert.equal((await db.query('select count(*)::int as n from public.event_registrations where event_id=$1',[eid])).rows[0].n,2);
+ await as('authenticated',ids[0]);
+ await assert.rejects(db.query("select public.register_for_event($1,'team','Late team','','9876543210',$2,true,false,'[]')",[eid,JSON.stringify({purpose:'Build',github:'https://github.com/student',linkedin:'https://linkedin.com/in/student',motivation:'I want to build games.'})]),/Registration is not open/);
+
+ await db.exec('reset role');
+ await db.exec(await readFile(new URL('../supabase/015_participant_self_service.sql',import.meta.url),'utf8'));
+ await as('authenticated',ids[3]);
+ const beforeMembers=(await db.query('select full_name,email,is_leader,is_me from public.registration_members($1)',[newReg])).rows;
+ assert.equal(beforeMembers.length,1);
+ assert.equal(beforeMembers[0].is_me,true);
+ await db.query("select public.update_registration_members($1,'Student Three Updated','updated3@example.test',$2)",[newReg,JSON.stringify([{name:'Edited Friend',email:'edited.friend@example.test'}])]);
+ const afterMembers=(await db.query('select full_name,email from public.registration_members($1)',[newReg])).rows;
+ assert.equal(afterMembers[0].full_name,'Student Three Updated');
+ assert.equal(afterMembers[0].email,'updated3@example.test');
+ const editedInvited=(await db.query('select name,email from public.event_invited_members where registration_id=$1',[newReg])).rows;
+ assert.deepEqual(editedInvited,[{name:'Edited Friend',email:'edited.friend@example.test'}]);
+ await db.query('select public.cancel_event_registration($1)',[eid]);
+ assert.equal((await db.query('select * from public.event_participants where event_id=$1',[eid])).rows.length,0);
  } finally {await db.close();}
 });

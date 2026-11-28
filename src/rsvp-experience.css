@@ -27,6 +27,9 @@ body.game-event{background:radial-gradient(ellipse at 80% 10%,#31235b 0,transpar
 .game-event .team-progress strong{color:#a8eeeb}.game-event .team-progress progress{accent-color:#8adbd8}
 .game-event #event-registration .add-teammate{color:#b6eeed;border-color:#7d9eaf}
 .game-event .event-button,.game-event button[type=submit]{background:#b9b0f6;border-color:#ddd5ff;color:#17132e;box-shadow:0 4px 0 #665486}
+.game-event .event-button.sold-out-label{background:#232944;border-color:#635c84;color:#c7c2e2;box-shadow:none}
+.game-event .event-badge.sold-out{background:#b9b0f626;border-color:#beafff;color:#e7e5ff}
+.game-event .sold-out-banner{border-left:4px solid #80dedc;background:linear-gradient(135deg,#1d2444f7,#151a30f7)}
 .game-event .event-hero:before{content:'✦  PLAY / BUILD / MAKE A DIFFERENCE';font:700 12px 'Space Grotesk',sans-serif;letter-spacing:2px;color:#a8e4e6}
 .game-event .event-hero{background:linear-gradient(120deg,#151a30e8,#312552a6);padding:30px;border-radius:16px}
 .game-event .form-note{color:#c7c2e2}

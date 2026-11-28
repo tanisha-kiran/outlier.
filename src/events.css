@@ -53,3 +53,13 @@
  .events-menu>div{position:static;margin:8px 0 6px;padding:8px 12px;min-width:0;gap:8px;box-shadow:none;background:#ffffff05}
  .events-menu>div a{padding:14px 12px}
 }
+.event-card-tags{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.event-badge.sold-out{display:inline-block;padding:4px 10px;border-radius:999px;background:#f5b8af22;border:1px solid #f5b8af;color:#ffd8d2;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.event-button.sold-out-label{background:#4d2c3f;border-color:#916277;color:#e8ced8;cursor:default;opacity:.85;pointer-events:none;box-shadow:none}
+.sold-out-banner{border-left:4px solid #f5b8af;background:linear-gradient(135deg,#472038,#2b1426)}
+.sold-out-banner h2{margin:12px 0 8px}
+.sold-out-banner p{margin:0 0 8px}
+.member-edit-box{margin:20px 0;padding:16px;border:1px solid #795466;border-radius:10px;background:#ffffff08}
+.member-edit-box summary{cursor:pointer;font-weight:600}
+.member-edit-box form{margin-top:16px}
+.danger-button{border-color:#e07a8f!important;color:#ffb8c6!important}

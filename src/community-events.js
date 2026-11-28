@@ -2,7 +2,7 @@ import { enhanceTeamForm } from './team-form.js';
 import { questionsFor, starshipBackdrop, validateRsvpAnswers } from './rsvp-experience.js';
 import { client, startGate } from './onboarding.js';
 import { setupNavigation } from './navigation.js';
-import { escapeHtml as esc, httpsUrl, completed, registrationState, submissionFormState, googleFormUrl, splitEvents, ist, eventCoverUrl, eventImageUrl } from './event-model.js';
+import { escapeHtml as esc, httpsUrl, completed, isSoldOut, soldOutMessage, registrationState, submissionFormState, googleFormUrl, splitEvents, ist, eventCoverUrl, eventImageUrl } from './event-model.js';
 
 export const link = (url, label) => httpsUrl(url) ? `<a class="event-button secondary" href="${esc(httpsUrl(url))}" target="_blank" rel="noopener noreferrer">${esc(label)}</a>` : '';
 export function shell() {
@@ -30,8 +30,14 @@ export async function startEvents() {
     } else await detail(e);
   } catch { notice('We couldn’t load events. Please retry. If this continues, contact the organizer.'); }
 }
+function soldOutBanner(e) {
+  if (!isSoldOut(e)) return '';
+  const msg = soldOutMessage(e);
+  return `<section class="event-panel sold-out-banner" aria-label="Registration status"><span class="event-badge sold-out">SOLD OUT</span><h2>${esc(msg.heading)}</h2><p>${esc(msg.body)}</p><p class="event-muted">${esc(msg.detail)}</p></section>`;
+}
 function card(e, past = false) {
-  return `<article class="hub-card">${eventCoverUrl(e)?`<img src="${esc(eventCoverUrl(e))}" referrerpolicy="no-referrer" alt="${esc(e.title)} event cover" loading="lazy">`:''}<span class="event-tag">${esc(e.category)} · OUTLIER</span><h3>${esc(e.title)}</h3><div class="event-meta-line">${esc(ist(e.starts_at))}<br>${esc(e.mode==='online'?'Online':e.location||'Venue to be announced')}</div><p>${esc(e.description.slice(0,180))}${e.description.length>180?'…':''}</p><div class="event-actions"><a class="event-button" href="/events/${esc(e.slug)}">${past?'Read recap':'View Details'}</a>${past?link(e.results_url,'Results')+link(e.demos_url,'Project demos'):''}</div></article>`;
+  const soldOut = !past && isSoldOut(e);
+  return `<article class="hub-card">${eventCoverUrl(e)?`<img src="${esc(eventCoverUrl(e))}" referrerpolicy="no-referrer" alt="${esc(e.title)} event cover" loading="lazy">`:''}<div class="event-card-tags"><span class="event-tag">${esc(e.category)} · OUTLIER</span>${soldOut?'<span class="event-badge sold-out">SOLD OUT</span>':''}</div><h3>${esc(e.title)}</h3><div class="event-meta-line">${esc(ist(e.starts_at))}<br>${esc(e.mode==='online'?'Online':e.location||'Venue to be announced')}</div><p>${esc(e.description.slice(0,180))}${e.description.length>180?'…':''}</p><div class="event-actions"><a class="event-button" href="/events/${esc(e.slug)}">${past?'Read recap':'View Details'}</a>${soldOut?'<span class="event-button sold-out-label" aria-disabled="true">Sold out</span>':''}${past?link(e.results_url,'Results')+link(e.demos_url,'Project demos'):''}</div></article>`;
 }
 async function getPhotos(eventId) {
   let query=client.from('event_photos').select('*').eq('status','published').order('sort_order').order('created_at');
@@ -75,6 +81,7 @@ async function hub() {
   window.setTimeout(()=>{if(!document.hidden&&!document.querySelector('dialog[open]')) hub().catch(()=>{});},60000);
 }
 function registrationAction(e) {
+  if(isSoldOut(e)) return `<span class="event-button sold-out-label" aria-disabled="true">Sold out</span><p class="event-status">Registration is closed because all places have been filled.</p>`;
   const state=registrationState(e);
   if(state!=='Register') return `<p class="event-status">${state}</p>`;
   return e.registration_mode==='external'?link(e.apply_url,'RSVP on event platform'):`<a class="event-button" href="/events/${esc(e.slug)}/register">RSVP / My RSVP</a>`;
@@ -83,7 +90,8 @@ async function detail(e) {
   const photos=await getPhotos(e.id);
   const {data:winners,error:winnerError}=await client.from('event_winners').select('*').eq('event_id',e.id).eq('status','published').order('place');
   const section=(title,body)=>body?`<section class="event-panel"><h2>${title}</h2><div class="event-copy">${esc(body)}</div></section>`:'';
-  document.querySelector('#event-main').innerHTML=`<a href="/events">All Events</a><div class="event-hero"><span class="event-tag">${esc(e.category)} · ${esc(e.organizer)}</span><h1>${esc(e.title)}</h1>${eventCoverUrl(e)?`<img class="event-cover" src="${esc(eventCoverUrl(e))}" referrerpolicy="no-referrer" alt="${esc(e.title)} event cover">`:''}</div><div class="detail-grid"><div>${section('About the event',e.description)}${section('Rules',e.rules)}${section('Schedule',e.schedule)}${section('Prizes',e.prize)}${section('FAQ',e.faq)}${section('Recap',e.recap)}${e.results_url||e.demos_url?`<section class="event-panel"><h2>Results & projects</h2>${link(e.results_url,'View results')}${link(e.demos_url,'Project demos')}</section>`:''}</div><aside><div class="event-panel"><h2>Event details</h2><p><strong>Starts</strong><br>${esc(ist(e.starts_at))}${e.ends_at?`<br><strong>Ends</strong><br>${esc(ist(e.ends_at))}`:''}</p><p><strong>${e.mode==='online'?'Online event':esc(e.mode==='hybrid'?'Hybrid event':'Venue')}</strong><br>${esc(e.location||'Details to be announced')}</p>${e.eligibility?`<p><strong>Eligibility</strong><br>${esc(e.eligibility)}</p>`:''}<p>${e.participation==='both'?'Solo or team':e.participation==='solo'?'Solo participation':'Team participation'}${e.participation!=='solo'?` · ${Math.max(2,e.min_team)}–${e.max_team} members per team`:''}</p>${e.capacity?`<p>Capacity: ${e.capacity} participants</p>`:''}${e.deadline?`<p>Register by ${esc(ist(e.deadline))}</p>`:''}${e.registration_opens_at?`<p>Registration opens ${esc(ist(e.registration_opens_at))}</p>`:''}<div id="registration-action">${registrationAction(e)}</div>${e.registration_mode!=='external'?`<p><a href="/events/${esc(e.slug)}/register">View my registration</a></p>`:''}${e.submission_form_url||e.submission_deadline?`<section><h3>Project submission</h3>${e.submission_deadline?`<p>Deadline: ${esc(ist(e.submission_deadline))}</p>`:''}<div id="project-action">${projectAction(e)}</div></section>`:''}</div></aside></div>${photos.length?`<section id="gallery"><h2>Event gallery</h2>${albums([e],photos)}</section>`:''}`;
+  const soldOut=isSoldOut(e);
+  document.querySelector('#event-main').innerHTML=`<a href="/events">All Events</a><div class="event-hero"><div class="event-card-tags"><span class="event-tag">${esc(e.category)} · ${esc(e.organizer)}</span>${soldOut?'<span class="event-badge sold-out">SOLD OUT</span>':''}</div><h1>${esc(e.title)}</h1>${eventCoverUrl(e)?`<img class="event-cover" src="${esc(eventCoverUrl(e))}" referrerpolicy="no-referrer" alt="${esc(e.title)} event cover">`:''}</div>${soldOutBanner(e)}<div class="detail-grid"><div>${section('About the event',e.description)}${section('Rules',e.rules)}${section('Schedule',e.schedule)}${section('Prizes',e.prize)}${section('FAQ',e.faq)}${section('Recap',e.recap)}${e.results_url||e.demos_url?`<section class="event-panel"><h2>Results & projects</h2>${link(e.results_url,'View results')}${link(e.demos_url,'Project demos')}</section>`:''}</div><aside><div class="event-panel"><h2>Event details</h2><p><strong>Starts</strong><br>${esc(ist(e.starts_at))}${e.ends_at?`<br><strong>Ends</strong><br>${esc(ist(e.ends_at))}`:''}</p><p><strong>${e.mode==='online'?'Online event':esc(e.mode==='hybrid'?'Hybrid event':'Venue')}</strong><br>${esc(e.location||'Details to be announced')}</p>${e.eligibility?`<p><strong>Eligibility</strong><br>${esc(e.eligibility)}</p>`:''}<p>${e.participation==='both'?'Solo or team':e.participation==='solo'?'Solo participation':'Team participation'}${e.participation!=='solo'?` · ${Math.max(2,e.min_team)}–${e.max_team} members per team`:''}</p>${e.capacity?`<p>Capacity: ${e.capacity} participants</p>`:''}${e.deadline?`<p>Register by ${esc(ist(e.deadline))}</p>`:''}${e.registration_opens_at?`<p>Registration opens ${esc(ist(e.registration_opens_at))}</p>`:''}<div id="registration-action">${registrationAction(e)}</div>${e.registration_mode!=='external'?`<p><a href="/events/${esc(e.slug)}/register">${soldOut?'Already registered? View my registration':'View my registration'}</a></p>`:''}${e.submission_form_url||e.submission_deadline?`<section><h3>Project submission</h3>${e.submission_deadline?`<p>Deadline: ${esc(ist(e.submission_deadline))}</p>`:''}<div id="project-action">${projectAction(e)}</div></section>`:''}</div></aside></div>${photos.length?`<section id="gallery"><h2>Event gallery</h2>${albums([e],photos)}</section>`:''}`;
   if(winners?.length) document.querySelector('#event-main').insertAdjacentHTML('beforeend',`<section id="winners" class="hub-section"><h2>Winners & projects</h2><div class="hub-grid">${winners.map(w=>`<article class="hub-card"><span class="event-tag">${w.place===1?'1st place':w.place===2?'2nd place':'3rd place'}</span><h3>${esc(w.entry_name)}</h3><strong>${esc(w.project_title)}</strong>${w.description?`<p>${esc(w.description)}</p>`:''}${link(w.project_url,'View project')}</article>`).join('')}</div></section>`);
   if(winnerError) document.querySelector('#event-main').insertAdjacentHTML('beforeend','<p role="status">Results are temporarily unavailable. Please try again later.</p>');
   bindGallery(photos);
@@ -100,13 +108,64 @@ export async function participantPage(e, action) {
   const main=document.querySelector('#event-main');
   main.innerHTML=`<a href="/events/${esc(e.slug)}">Back to event</a><h1>${action==='submit'?'Your project':'Your RSVP'}</h1><h2>${esc(e.title)}</h2><div id="participant-content"></div>`;
   const area=document.querySelector('#participant-content');
+  const soldOut=isSoldOut(e);
   if(membership){
-    const [{data:r,error:re},{data:roster,error:rr}]=await Promise.all([client.from('event_registrations').select('*').eq('id',membership.registration_id).single(),client.rpc('registration_roster',{rid:membership.registration_id})]);
-    if(re||rr) throw re||rr;
+    const [{data:r,error:re}, memberRes, invitedRes]=await Promise.all([
+      client.from('event_registrations').select('*').eq('id',membership.registration_id).single(),
+      client.rpc('registration_members',{rid:membership.registration_id}),
+      client.from('event_invited_members').select('name,email').eq('registration_id',membership.registration_id)
+    ]);
+    let roster=memberRes.data;
+    if(memberRes.error){
+      const fallback=await client.rpc('registration_roster',{rid:membership.registration_id});
+      if(fallback.error) throw fallback.error;
+      roster=(fallback.data||[]).map(p=>({...p,email:'',is_me:false}));
+    }
+    if(re) throw re;
+    const invited=invitedRes.error?[]:(invitedRes.data||[]);
     if(action==='submit'){submissionForm(e,r,user,area,roster);return;}
-    area.innerHTML=`<section class="event-panel"><h2>${r.participation==='team'?'Your team card':'Registration confirmed'}</h2><p>Reference: <code>${esc(r.reference_code||r.id)}</code></p><p>${r.participation==='team'?`Team: ${esc(r.team_name)} · ${roster.length}/${e.max_team} places`:'Solo participant'}</p><ul>${roster.map(p=>`<li>${esc(p.full_name)}${p.is_leader?' · Leader':''}</li>`).join('')}</ul>${r.participation==='team'?`<p>Share this invite code privately with teammates. Each member must sign in and register themselves before the registration deadline.</p><label>Unique team code<input class="team-code" readonly value="${esc(r.invite_code)}" aria-label="Unique team code"></label><button type="button" id="copy-team-code">Copy team code</button><p id="copy-message" role="status"></p>${roster.length<Math.max(2,e.min_team)?`<p class="event-status">Team incomplete: at least ${Math.max(2,e.min_team)} confirmed members are required for a complete team.</p>`:''}`:''}<div class="event-actions"><a class="event-button" href="/events/${esc(e.slug)}/submit">Project submission</a></div></section>`;bindCopy(r.invite_code);return;
+    const isLeader=r.owner_id===user.id;
+    const me=roster.find(p=>p.is_me)||{full_name:'',email:user.email||''};
+    const maxInvited=Math.max(0,(e.max_team||1)-1);
+    area.innerHTML=`${soldOutBanner(e)}<section class="event-panel"><h2>${r.participation==='team'?'Your team card':'Registration confirmed'}</h2><p>Reference: <code>${esc(r.reference_code||r.id)}</code></p><p>${r.participation==='team'?`Team: ${esc(r.team_name)} · ${roster.length}/${e.max_team} places`:'Solo participant'}</p><h3>Confirmed members</h3><ul>${roster.map(p=>`<li><strong>${esc(p.full_name)}</strong>${p.email?` · ${esc(p.email)}`:''}${p.is_leader?' · Leader':''}</li>`).join('')}</ul>${r.participation==='team'&&invited.length?`<h3>Provided teammate details</h3><ul>${invited.map(m=>`<li><strong>${esc(m.name)}</strong> · ${esc(m.email)}</li>`).join('')}</ul>`:''}${r.participation==='team'?`<p>${soldOut?'Registration is closed because all places have been filled. Your team code and roster are preserved here.':'Share this invite code privately with teammates. Each member must sign in and register themselves before the registration deadline.'}</p><label>Unique team code<input class="team-code" readonly value="${esc(r.invite_code)}" aria-label="Unique team code"></label><button type="button" id="copy-team-code">Copy team code</button><p id="copy-message" role="status"></p>${roster.length<Math.max(2,e.min_team)?`<p class="event-status">Team incomplete: at least ${Math.max(2,e.min_team)} confirmed members are required for a complete team.</p>`:''}`:''}<details class="member-edit-box"><summary>Edit member names &amp; emails</summary><form id="edit-members-form" class="event-form"><div class="form-grid">${input('my_name','Your full name',me.full_name,'text','required minlength="2" maxlength="100"')}${input('my_email','Your contact email',me.email||user.email||'','email','required maxlength="254"')}</div>${isLeader&&r.participation==='team'&&maxInvited>0?`<p class="form-note">Edit the teammate names and emails you provided:</p>${Array.from({length:maxInvited},(_,i)=>`<div class="form-grid">${input('inv_name_'+i,'Teammate '+(i+1)+' name',invited[i]?.name||'','text','maxlength="100"')}${input('inv_email_'+i,'Teammate '+(i+1)+' email',invited[i]?.email||'','email','maxlength="254"')}</div>`).join('')}`:''}<p id="edit-members-message" class="event-status" role="status"></p><button type="submit">Save member details</button></form></details><div class="event-actions"><a class="event-button" href="/events/${esc(e.slug)}/submit">Project submission</a><button type="button" class="secondary danger-button" id="cancel-registration">Cancel registration</button></div><p id="cancel-message" class="event-status" role="status"></p></section>`;
+    bindCopy(r.invite_code);
+    const editForm=area.querySelector('#edit-members-form');
+    editForm.onsubmit=async ev=>{
+      ev.preventDefault();
+      const btn=editForm.querySelector('button[type=submit]'), msg=editForm.querySelector('#edit-members-message'), d=new FormData(editForm);
+      let nextInvited=null;
+      if(isLeader&&r.participation==='team'&&maxInvited>0){
+        nextInvited=[];
+        for(let i=0;i<maxInvited;i++){
+          const name=String(d.get('inv_name_'+i)||'').trim(), email=String(d.get('inv_email_'+i)||'').trim();
+          if(Boolean(name)!==Boolean(email)){msg.textContent='Enter both name and email for each teammate, or leave both blank.';return;}
+          if(name) nextInvited.push({name,email});
+        }
+      }
+      btn.disabled=true; msg.textContent='Saving…';
+      try{
+        const {error:ue}=await client.rpc('update_registration_members',{rid:r.id,my_name:String(d.get('my_name')||'').trim(),my_email:String(d.get('my_email')||'').trim(),invited_members:nextInvited});
+        if(ue) throw ue;
+        await participantPage(e,'register');
+      }catch(err){msg.textContent=err.message||'Could not save member details.';btn.disabled=false;}
+    };
+    const cancelBtn=area.querySelector('#cancel-registration');
+    cancelBtn.onclick=async()=>{
+      const promptText=soldOut?'Cancel your registration for Play for a Purpose? Because this event is sold out, you will not be able to register again.':'Cancel your registration for this event?';
+      if(!confirm(promptText)) return;
+      cancelBtn.disabled=true;
+      const msg=area.querySelector('#cancel-message');
+      msg.textContent='Cancelling registration…';
+      try{
+        const {error:ce}=await client.rpc('cancel_event_registration',{eid:e.id});
+        if(ce) throw ce;
+        await participantPage(e,'register');
+      }catch(err){msg.textContent=err.message||'Could not cancel registration.';cancelBtn.disabled=false;}
+    };
+    return;
   }
-  if(action==='submit'){area.innerHTML=`<p class="event-empty">Register before submitting a project. <a href="/events/${esc(e.slug)}/register">Go to RSVP</a>.</p>`;return;}
+  if(action==='submit'){area.innerHTML=soldOut?`${soldOutBanner(e)}<p class="event-empty">Project submissions are only available to already registered participants. Registration is closed because all places have been filled.</p>`:`<p class="event-empty">Register before submitting a project. <a href="/events/${esc(e.slug)}/register">Go to RSVP</a>.</p>`;return;}
+  if(soldOut){area.innerHTML=`${soldOutBanner(e)}<section class="event-panel"><span class="event-button sold-out-label" aria-disabled="true">Sold out</span><p class="event-status">Registration is closed because all places have been filled. New individual RSVPs, team creation, team joins, and teammate invitations are disabled.</p></section>`;return;}
   if(registrationState(e)!=='Register'||e.registration_mode!=='native'){area.innerHTML=registrationAction(e);return;}
   const {data:p,error:pe}=await client.from('profiles').select('*').eq('id',user.id).single();if(pe)throw pe;
   const questions=[...questionsFor(e), {id:'contact_email',label:'Contact email',type:'text',required:true}];

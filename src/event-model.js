@@ -12,9 +12,21 @@ export function eventImageUrl(value) {
  }
  return safe;
 }
+export const SOLD_OUT_EVENTS = new Set(['play-for-a-purpose']);
+export function isSoldOut(e, now = Date.now()) {
+  return Boolean(e && !completed(e, now) && (SOLD_OUT_EVENTS.has(e.slug) || e.sold_out));
+}
+export function soldOutMessage(e) {
+  return {
+    heading: 'That’s a wrap for this one!',
+    body: `${e?.title || 'This event'} is officially sold out. Thank you to everyone who signed up and brought your ideas to OUTLIER. We can’t wait to see you at the next OUTLIER event. Until then, keep building!`,
+    detail: 'Registration is closed because all places have been filled.'
+  };
+}
 export function completed(e, now = Date.now()) { return Boolean((e.ends_at || e.starts_at) && Date.parse(e.ends_at || e.starts_at) <= now); }
 export function registrationState(e, now = Date.now()) {
   if (completed(e, now)) return 'Event Completed';
+  if (isSoldOut(e, now)) return 'Sold out';
   if (e.registration_mode === 'closed' || (e.deadline && now >= Date.parse(e.deadline))) return 'Registration Closed';
   if (e.registration_mode === 'announced' || (e.registration_opens_at && now < Date.parse(e.registration_opens_at))) return 'Registration opens soon';
   return e.deadline && e.starts_at && ['native','external'].includes(e.registration_mode) ? 'Register' : 'Registration opens soon';
